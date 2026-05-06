@@ -37,7 +37,7 @@ export default function Contact() {
           <h1 className="text-5xl md:text-6xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
             Get in <span style={{ color: '#39ff14' }}>Touch</span>
           </h1>
-          <p className="text-[#9ca3af] max-w-lg mx-auto">
+          <p className="max-w-lg mx-auto" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
             Got a question? Spotted a bug? Want to collab? Drop us a line — we read every message.
           </p>
         </div>
@@ -135,16 +135,17 @@ export default function Contact() {
       <style>{`
         .contact-input {
           width: 100%;
-          padding: 12px 14px;
-          border-radius: 8px;
-          background: rgba(255,255,255,0.05);
+          padding: 12px 16px;
+          border-radius: 10px;
+          background: rgba(255,255,255,0.04);
           border: 1px solid rgba(255,255,255,0.1);
           color: #e8e8e8;
           font-size: 14px;
-          transition: all 0.2s;
+          font-family: inherit;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .contact-input:focus { outline: none; border-color: #39ff14; }
-        .contact-input::placeholder { color: #6b7280; }
+        .contact-input:focus { outline: none; border-color: #39ff14; box-shadow: 0 0 0 3px rgba(57,255,20,0.08); }
+        .contact-input::placeholder { color: #4b5563; }
       `}</style>
     </div>
   )
@@ -153,9 +154,9 @@ export default function Contact() {
 function Field({ label, error, children }) {
   return (
     <div>
-      <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">{label}</label>
+      <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</label>
       {children}
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
+      {error && <p className="mt-1" style={{ fontSize: '12px', color: '#ef4444', fontFamily: 'Space Grotesk, sans-serif' }}>{error}</p>}
     </div>
   )
 }

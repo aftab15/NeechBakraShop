@@ -1,15 +1,23 @@
+import { useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Heart, ShoppingBag, Eye } from 'lucide-react'
+import { Heart, ShoppingBag, Eye, Zap } from 'lucide-react'
 import { addToCart, openCart } from '../../features/cart/cartSlice'
 import { toggleWishlist, selectIsWishlisted } from '../../features/wishlist/wishlistSlice'
 import { formatPrice, discountPercent } from '../../lib/utils'
+import { cardTilt } from '../../lib/animations'
 import toast from 'react-hot-toast'
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const isWishlisted = useSelector(selectIsWishlisted(product._id))
+  const cardRef = useRef(null)
+
+  useEffect(() => {
+    if (!cardRef.current) return
+    return cardTilt(cardRef.current)
+  }, [])
 
   const handleAddToCart = (e) => {
     e.preventDefault()
@@ -50,24 +58,40 @@ export default function ProductCard({ product }) {
 
   return (
     <Link
+      ref={cardRef}
       to={`/shop/${product.slug}`}
-      className="group relative flex flex-col glass rounded-2xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl"
-      style={{ border: '1px solid rgba(255,255,255,0.08)', '--shadow-color': 'rgba(57,255,20,0.15)' }}
+      className="group relative flex flex-col rounded-2xl overflow-hidden border-glow"
+      style={{
+        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid rgba(255,255,255,0.08)',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
+        transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(57,255,20,0.25)'
+        e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(57,255,20,0.08)'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
+        e.currentTarget.style.boxShadow = 'none'
+      }}
       aria-label={product.name}
     >
-      {/* Image / Gradient Placeholder */}
-      <div className={`relative aspect-square overflow-hidden ${product.gradientClass || 'product-gradient-1'}`}>
+      {/* Image area */}
+      <div className={`relative overflow-hidden ${product.gradientClass || 'product-gradient-1'}`}
+        style={{ aspectRatio: '4/5' }}>
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
+          <div className="w-full h-full flex items-center justify-center noise-overlay">
             <span
-              className="text-6xl font-black opacity-20 select-none"
+              className="text-7xl font-black opacity-15 select-none"
               style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}
             >
               NB
@@ -75,43 +99,60 @@ export default function ProductCard({ product }) {
           </div>
         )}
 
-        {/* Overlay Actions */}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
+        {/* Scan-line effect on hover */}
+        <div
+          className="absolute left-0 right-0 h-px opacity-0 group-hover:opacity-60 pointer-events-none"
+          style={{
+            background: 'linear-gradient(90deg, transparent, #39ff14, transparent)',
+            animation: 'scan-line 2s linear infinite',
+            top: 0,
+          }}
+        />
+
+        {/* Dark gradient at bottom of image */}
+        <div className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
+          style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 100%)' }} />
+
+        {/* Overlay actions */}
+        <div className="absolute inset-0 flex items-center justify-center gap-3
+          opacity-0 group-hover:opacity-100 transition-all duration-300"
+          style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}>
           <button
             onClick={handleWishlist}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ background: isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+            style={{
+              background: isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.12)',
+              border: `1px solid ${isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.2)'}`,
+              backdropFilter: 'blur(8px)',
+            }}
             aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
           >
-            <Heart className="w-5 h-5" fill={isWishlisted ? '#fff' : 'none'} color="#fff" />
+            <Heart className="w-4.5 h-4.5" fill={isWishlisted ? '#fff' : 'none'} color="#fff" />
           </button>
           <button
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/shop/${product.slug}`) }}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:scale-110"
-            style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(8px)' }}
+            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
+            style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}
             aria-label="View product"
           >
-            <Eye className="w-5 h-5 text-white" />
+            <Eye className="w-4.5 h-4.5 text-white" />
           </button>
         </div>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1">
+        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {product.isFeatured && (
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded"
-              style={{ background: '#39ff14', color: '#0a0a0a', fontFamily: 'Rajdhani, sans-serif' }}>
-              Featured
+            <span className="tag" style={{ background: '#39ff14', color: '#0a0a0a' }}>
+              <Zap className="w-2.5 h-2.5 mr-0.5" /> Featured
             </span>
           )}
           {discount > 0 && (
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded"
-              style={{ background: '#ef4444', color: '#fff', fontFamily: 'Rajdhani, sans-serif' }}>
+            <span className="tag" style={{ background: '#ef4444', color: '#fff' }}>
               -{discount}%
             </span>
           )}
           {outOfStock && (
-            <span className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest rounded"
-              style={{ background: '#374151', color: '#9ca3af', fontFamily: 'Rajdhani, sans-serif' }}>
+            <span className="tag" style={{ background: 'rgba(55,65,81,0.9)', color: '#9ca3af' }}>
               Sold Out
             </span>
           )}
@@ -119,13 +160,13 @@ export default function ProductCard({ product }) {
       </div>
 
       {/* Info */}
-      <div className="p-5 flex flex-col gap-3 flex-1">
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280]">
+      <div className="p-5 flex flex-col gap-2.5 flex-1">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.15em]" style={{ color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>
           {product.category}
         </p>
         <h3
-          className="text-[15px] font-bold leading-snug group-hover:text-[#39ff14] transition-colors line-clamp-2"
-          style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}
+          className="text-[15px] font-semibold leading-snug group-hover:text-[#39ff14] transition-colors duration-200 line-clamp-2"
+          style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#e8e8e8', letterSpacing: '-0.01em' }}
         >
           {product.name}
         </h3>
@@ -134,24 +175,27 @@ export default function ProductCard({ product }) {
         {product.sizes?.length > 0 && product.sizes[0] !== 'ONE SIZE' && (
           <div className="flex items-center gap-1 flex-wrap">
             {product.sizes.slice(0, 4).map((s) => (
-              <span key={s} className="text-[9px] px-1.5 py-0.5 rounded border border-white/10 text-[#6b7280]">
+              <span key={s} className="text-[9px] px-1.5 py-0.5 rounded"
+                style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>
                 {s}
               </span>
             ))}
             {product.sizes.length > 4 && (
-              <span className="text-[9px] text-[#6b7280]">+{product.sizes.length - 4}</span>
+              <span className="text-[9px]" style={{ color: '#6b7280' }}>+{product.sizes.length - 4}</span>
             )}
           </div>
         )}
 
         {/* Price row */}
-        <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-black" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>
+        <div className="flex items-center justify-between mt-auto pt-3"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <div className="flex flex-col gap-0.5">
+            <span className="text-lg font-bold leading-none"
+              style={{ color: '#39ff14', fontFamily: 'Space Grotesk, sans-serif', letterSpacing: '-0.02em' }}>
               {formatPrice(product.price)}
             </span>
             {product.compareAtPrice && (
-              <span className="text-sm line-through text-[#6b7280]">
+              <span className="text-xs line-through" style={{ color: '#4b5563' }}>
                 {formatPrice(product.compareAtPrice)}
               </span>
             )}
@@ -159,14 +203,23 @@ export default function ProductCard({ product }) {
           <button
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className="w-9 h-9 rounded-lg flex items-center justify-center transition-all hover:scale-110 disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ background: outOfStock ? '#1a1a1a' : '#39ff14' }}
+            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:scale-100"
+            style={{
+              background: outOfStock ? '#1a1a1a' : 'linear-gradient(135deg, #39ff14, #28cc0f)',
+              boxShadow: outOfStock ? 'none' : '0 4px 14px rgba(57,255,20,0.3)',
+            }}
             aria-label="Add to cart"
           >
             <ShoppingBag className="w-4 h-4" color={outOfStock ? '#6b7280' : '#0a0a0a'} />
           </button>
         </div>
       </div>
+
+      {/* Bottom accent line */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        style={{ background: 'linear-gradient(90deg, transparent, #39ff14, transparent)' }}
+      />
     </Link>
   )
 }

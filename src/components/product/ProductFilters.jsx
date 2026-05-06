@@ -31,7 +31,7 @@ export default function ProductFilters({ className = '' }) {
 
       {/* Category */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3">Category</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Category</p>
         <div className="flex flex-col gap-1.5">
           {CATEGORIES.map((cat) => {
             const val = cat === 'All' ? '' : cat
@@ -57,7 +57,7 @@ export default function ProductFilters({ className = '' }) {
 
       {/* Size */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3">Size</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Size</p>
         <div className="flex flex-wrap gap-2">
           {SIZES.map((s) => {
             const active = filters.size === s
@@ -83,7 +83,7 @@ export default function ProductFilters({ className = '' }) {
 
       {/* Price Range */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3">
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
           Max Price: ₹{filters.maxPrice}
         </p>
         <input
@@ -122,7 +122,7 @@ export default function ProductFilters({ className = '' }) {
 
       {/* Sort */}
       <div>
-        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3">Sort By</p>
+        <p className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sort By</p>
         <select
           value={filters.sortBy}
           onChange={(e) => set('sortBy', e.target.value)}

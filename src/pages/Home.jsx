@@ -1,16 +1,16 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
-import { Zap, ArrowRight, Star, Flame, Clock } from 'lucide-react'
+import { Zap, ArrowRight, Star, Flame, Clock, Truck, RotateCcw, ShieldCheck, Users } from 'lucide-react'
 import ProductGrid from '../components/product/ProductGrid'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
 import toast from 'react-hot-toast'
 import { MOCK_FEATURED } from '../lib/mockProducts'
+import { heroEntrance, scrollReveal, scrollRevealStagger, fadeUp } from '../lib/animations'
 
 const isPlaceholder = import.meta.env.VITE_CONVEX_URL?.includes('placeholder')
 
-// Countdown timer hook
 function useCountdown(targetDate) {
   const [timeLeft, setTimeLeft] = useState({})
   useEffect(() => {
@@ -31,7 +31,14 @@ function useCountdown(targetDate) {
   return timeLeft
 }
 
-const DROP_DATE = Date.now() + 3 * 24 * 3600 * 1000 + 5 * 3600 * 1000 // 3d 5h from now
+const DROP_DATE = Date.now() + 3 * 24 * 3600 * 1000 + 5 * 3600 * 1000
+
+const TRUST_ITEMS = [
+  { icon: Truck,       label: 'Free Shipping', sub: 'On orders above ₹999' },
+  { icon: RotateCcw,  label: '7-Day Returns',  sub: 'No questions asked'  },
+  { icon: ShieldCheck, label: 'Secure Checkout', sub: 'Razorpay encrypted'  },
+  { icon: Users,       label: '10K+ Fans',      sub: 'Join the community'  },
+]
 
 export default function Home() {
   const rawFeatured = useQuery(api.products.getFeaturedProducts, isPlaceholder ? 'skip' : { limit: 4 })
@@ -40,6 +47,37 @@ export default function Home() {
   const [email, setEmail] = useState('')
   const [subLoading, setSubLoading] = useState(false)
   const subscribe = useMutation(api.newsletter.subscribe)
+
+  // Hero animation refs
+  const badgeRef     = useRef(null)
+  const titleRef     = useRef(null)
+  const taglineRef   = useRef(null)
+  const descRef      = useRef(null)
+  const buttonsRef   = useRef(null)
+  const statsRef     = useRef(null)
+
+  // Section refs
+  const trustRef     = useRef(null)
+  const featHeaderRef = useRef(null)
+  const brandRef     = useRef(null)
+  const countdownRef = useRef(null)
+  const newsletterRef = useRef(null)
+
+  useEffect(() => {
+    heroEntrance(
+      [badgeRef.current, titleRef.current, taglineRef.current, descRef.current, buttonsRef.current],
+      { delay: 0.15 }
+    )
+    if (statsRef.current) fadeUp(statsRef.current, { delay: 0.8, y: 20 })
+  }, [])
+
+  useEffect(() => {
+    if (trustRef.current)      scrollReveal(trustRef.current,     { y: 30 })
+    if (featHeaderRef.current) scrollReveal(featHeaderRef.current, { y: 30 })
+    if (brandRef.current)      scrollReveal(brandRef.current,     { y: 40 })
+    if (countdownRef.current)  scrollReveal(countdownRef.current, { y: 40 })
+    if (newsletterRef.current) scrollReveal(newsletterRef.current,{ y: 30 })
+  }, [])
 
   const handleSubscribe = async (e) => {
     e.preventDefault()
@@ -54,28 +92,35 @@ export default function Home() {
 
   return (
     <div className="flex flex-col">
+
       {/* ── HERO ── */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a0a0a 0%, #0d0d1a 40%, #0a0a0a 100%)' }}>
-        {/* Animated background grid */}
-        <div className="absolute inset-0 opacity-10" style={{
-          backgroundImage: 'linear-gradient(rgba(57,255,20,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.3) 1px, transparent 1px)',
+      <section
+        className="relative min-h-screen flex items-center justify-center overflow-hidden"
+        style={{ background: 'linear-gradient(135deg, #0a0a0a 0%, #0d0d1a 40%, #0a0a0a 100%)' }}
+      >
+        {/* Background grid */}
+        <div className="absolute inset-0 opacity-[0.07]" style={{
+          backgroundImage: 'linear-gradient(rgba(57,255,20,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.4) 1px, transparent 1px)',
           backgroundSize: '60px 60px',
         }} />
         {/* Glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl" style={{ background: '#39ff14' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl" style={{ background: '#8b5cf6' }} />
+        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-3xl pointer-events-none" style={{ background: '#39ff14' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.08] blur-3xl pointer-events-none" style={{ background: '#8b5cf6' }} />
 
         <div className="relative z-10 container text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass" style={{ border: '1px solid rgba(57,255,20,0.3)' }}>
-            <Flame className="w-4 h-4" style={{ color: '#39ff14' }} />
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>
-              Official Merch Store
-            </span>
+          <div ref={badgeRef} style={{ opacity: 0 }}>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass" style={{ border: '1px solid rgba(57,255,20,0.3)' }}>
+              <Flame className="w-4 h-4" style={{ color: '#39ff14' }} />
+              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#39ff14', fontFamily: 'Space Grotesk, sans-serif' }}>
+                Official Merch Store
+              </span>
+            </div>
           </div>
 
           {/* Wordmark */}
           <h1
+            ref={titleRef}
             className="text-7xl md:text-9xl lg:text-[160px] font-black uppercase tracking-tighter leading-none mb-6"
             style={{
               fontFamily: 'Orbitron, monospace',
@@ -83,23 +128,30 @@ export default function Home() {
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 30px rgba(57,255,20,0.3))',
+              filter: 'drop-shadow(0 0 40px rgba(57,255,20,0.25))',
+              opacity: 0,
             }}
           >
             Neech<br />Bakra
           </h1>
 
           <p
+            ref={taglineRef}
             className="text-2xl md:text-4xl font-bold uppercase tracking-widest mb-4"
-            style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}
+            style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8', opacity: 0 }}
           >
             Wear the Madness. Own the Game.
           </p>
-          <p className="text-[#6b7280] text-base md:text-lg max-w-lg mx-auto mb-14">
+
+          <p
+            ref={descRef}
+            className="text-[#6b7280] text-base md:text-lg max-w-lg mx-auto mb-14"
+            style={{ fontFamily: 'Space Grotesk, sans-serif', opacity: 0 }}
+          >
             Gaming streetwear for those who live the grind. Limited drops. No restocks.
           </p>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center gap-4" style={{ opacity: 0 }}>
             <Link to="/shop" className="btn-neon text-base px-8 py-4 gap-3">
               Shop Now <ArrowRight className="w-5 h-5" />
             </Link>
@@ -109,33 +161,53 @@ export default function Home() {
           </div>
 
           {/* Stats */}
-          <div className="flex items-center justify-center gap-14 mt-20">
+          <div ref={statsRef} className="flex items-center justify-center gap-14 mt-20" style={{ opacity: 0 }}>
             {[['10K+', 'Community'], ['50+', 'Products'], ['100%', 'Fire']].map(([num, label]) => (
               <div key={label} className="text-center">
                 <p className="text-2xl font-black" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>{num}</p>
-                <p className="text-xs text-[#6b7280] uppercase tracking-widest">{label}</p>
+                <p className="text-xs text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
               </div>
             ))}
           </div>
         </div>
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
-          <span className="text-[10px] text-[#6b7280] uppercase tracking-widest">Scroll</span>
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
+          <span className="text-[10px] text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Scroll</span>
           <div className="w-5 h-8 rounded-full border border-[#6b7280] flex items-start justify-center pt-1">
             <div className="w-1 h-2 rounded-full bg-[#39ff14] animate-bounce" />
           </div>
         </div>
       </section>
 
+      {/* ── TRUST BAR ── */}
+      <div ref={trustRef} style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="container py-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x md:divide-white/5">
+            {TRUST_ITEMS.map(({ icon: Icon, label, sub }) => (
+              <div key={label} className="flex items-center gap-3 px-4 md:px-8 first:pl-0 last:pr-0">
+                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: 'rgba(57,255,20,0.08)', border: '1px solid rgba(57,255,20,0.15)' }}>
+                  <Icon className="w-4 h-4" style={{ color: '#39ff14' }} />
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold leading-tight" style={{ color: '#e8e8e8', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
+                  <p className="text-[11px] leading-tight" style={{ color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>{sub}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ── FEATURED DROPS ── */}
       <section className="section" style={{ background: '#0d0d0d' }}>
         <div className="container">
-          <div className="flex items-end justify-between mb-12">
+          <div ref={featHeaderRef} className="flex items-end justify-between mb-12">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Star className="w-4 h-4" style={{ color: '#39ff14' }} />
-                <span className="text-xs font-bold uppercase tracking-widest text-[#6b7280]">New Drops</span>
+                <span className="text-xs font-semibold uppercase tracking-widest text-[#6b7280]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>New Drops</span>
               </div>
               <h2 className="text-4xl md:text-5xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
                 Featured Merch
@@ -155,16 +227,16 @@ export default function Home() {
       {/* ── BRAND STORY ── */}
       <section className="section" style={{ background: '#0a0a0a' }}>
         <div className="container">
-          <div className="grid md:grid-cols-2 gap-16 items-start">
+          <div ref={brandRef} className="grid md:grid-cols-2 gap-16 items-start">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-[#6b7280] mb-3 block">About the Brand</span>
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3 block" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>About the Brand</span>
               <h2 className="text-4xl md:text-5xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
                 Why<br /><span style={{ color: '#39ff14' }}>NeechBakra?</span>
               </h2>
-              <p className="text-[#9ca3af] leading-relaxed mb-5">
+              <p className="leading-relaxed mb-5" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
                 NeechBakra started as a gaming alias — and turned into a movement. We're the underdogs who outgrind everyone. The ones they said couldn't make it. We proved them wrong. Now you can wear that energy.
               </p>
-              <p className="text-[#9ca3af] leading-relaxed mb-8">
+              <p className="leading-relaxed mb-8" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
                 Every drop is limited. Every design tells a story. From the grind to the stream, to the streets — this is for the real ones.
               </p>
               <div className="grid grid-cols-3 gap-4">
@@ -175,13 +247,13 @@ export default function Home() {
                 ].map(({ icon, label }) => (
                   <div key={label} className="glass rounded-xl p-5 text-center" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
                     <p className="text-2xl mb-2">{icon}</p>
-                    <p className="text-xs font-bold uppercase tracking-wide text-[#6b7280]">{label}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div className="relative">
-              <div className="w-full max-w-sm mx-auto aspect-square rounded-3xl overflow-hidden" style={{ background: 'linear-gradient(135deg, #1a0533 0%, #0a1a2e 50%, #001a0d 100%)' }}>
+              <div className="w-full max-w-sm mx-auto aspect-square rounded-3xl overflow-hidden noise-overlay" style={{ background: 'linear-gradient(135deg, #1a0533 0%, #0a1a2e 50%, #001a0d 100%)' }}>
                 <div className="w-full h-full flex items-center justify-center">
                   <span className="text-[160px] font-black opacity-10 select-none" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>
                     NB
@@ -191,7 +263,7 @@ export default function Home() {
               {/* Floating badge */}
               <div className="absolute bottom-4 left-4 glass rounded-2xl px-5 py-3" style={{ border: '1px solid rgba(57,255,20,0.3)' }}>
                 <p className="text-3xl font-black" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>10K+</p>
-                <p className="text-xs text-[#6b7280] uppercase tracking-widest">Fans Strong</p>
+                <p className="text-xs text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Fans Strong</p>
               </div>
             </div>
           </div>
@@ -201,15 +273,15 @@ export default function Home() {
       {/* ── LIMITED EDITION COUNTDOWN ── */}
       <section className="section" style={{ background: 'linear-gradient(135deg, #0d0a1a 0%, #0a0a0a 100%)' }}>
         <div className="container text-center">
-          <div className="glass-strong rounded-3xl p-8 md:p-12 max-w-3xl mx-auto" style={{ border: '1px solid rgba(139,92,246,0.3)' }}>
+          <div ref={countdownRef} className="glass-strong rounded-3xl p-8 md:p-12 max-w-3xl mx-auto" style={{ border: '1px solid rgba(139,92,246,0.3)' }}>
             <div className="flex items-center justify-center gap-2 mb-6">
               <Clock className="w-5 h-5" style={{ color: '#8b5cf6' }} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#8b5cf6' }}>Limited Drop Incoming</span>
+              <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#8b5cf6', fontFamily: 'Space Grotesk, sans-serif' }}>Limited Drop Incoming</span>
             </div>
             <h2 className="text-4xl md:text-6xl font-black uppercase mb-3" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
               Season 2 Drop
             </h2>
-            <p className="text-[#9ca3af] mb-10">The most hyped collection yet. Don't sleep on this.</p>
+            <p style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif' }} className="mb-10">The most hyped collection yet. Don't sleep on this.</p>
             {/* Countdown */}
             <div className="flex items-center justify-center gap-4 md:gap-8 mb-8">
               {[
@@ -225,7 +297,7 @@ export default function Home() {
                       {String(val).padStart(2, '0')}
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#6b7280] uppercase tracking-widest">{label}</span>
+                  <span className="text-[10px] text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</span>
                 </div>
               ))}
             </div>
@@ -239,28 +311,38 @@ export default function Home() {
       {/* ── NEWSLETTER ── */}
       <section className="section" style={{ background: '#0d0d0d' }}>
         <div className="container max-w-2xl mx-auto text-center">
-          <Zap className="w-10 h-10 block mx-auto mb-6" style={{ color: '#39ff14' }} />
-          <h2 className="text-4xl md:text-5xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-            Join the<br /><span style={{ color: '#39ff14' }}>Inner Circle</span>
-          </h2>
-          <p className="text-[#9ca3af] mb-10">
-            First access to drops, exclusive offers, and zero spam. Just pure NeechBakra energy.
-          </p>
-          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              required
-              className="flex-1 px-5 py-3.5 rounded-lg bg-white/5 border border-white/10 text-[#e8e8e8] placeholder-[#6b7280] focus:outline-none focus:border-[#39ff14] transition-colors"
-            />
-            <button type="submit" disabled={subLoading} className="btn-neon whitespace-nowrap">
-              {subLoading ? 'Joining...' : 'Join Now'}
-            </button>
-          </form>
+          <div ref={newsletterRef}>
+            <Zap className="w-10 h-10 block mx-auto mb-6" style={{ color: '#39ff14' }} />
+            <h2 className="text-4xl md:text-5xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
+              Join the<br /><span style={{ color: '#39ff14' }}>Inner Circle</span>
+            </h2>
+            <p className="mb-10" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
+              First access to drops, exclusive offers, and zero spam. Just pure NeechBakra energy.
+            </p>
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email"
+                required
+                className="flex-1 px-5 py-3.5 rounded-lg text-[#e8e8e8] placeholder-[#6b7280] focus:outline-none transition-colors"
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#39ff14'}
+                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+              />
+              <button type="submit" disabled={subLoading} className="btn-neon whitespace-nowrap">
+                {subLoading ? 'Joining...' : 'Join Now'}
+              </button>
+            </form>
+          </div>
         </div>
       </section>
+
     </div>
   )
 }

@@ -68,14 +68,14 @@ export default function Login() {
           >
             {mode === 'signIn' ? 'Welcome Back' : 'Join the Squad'}
           </h1>
-          <p className="text-[#6b7280] text-sm text-center mb-8">
+          <p className="text-center mb-8" style={{ color: '#6b7280', fontSize: '14px', fontFamily: 'Space Grotesk, sans-serif' }}>
             {mode === 'signIn' ? 'Sign in to your NeechBakra account' : 'Create your account to start shopping'}
           </p>
 
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             {mode === 'signUp' && (
               <div>
-                <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">Name</label>
+                <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>Name</label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
                   <input
@@ -90,7 +90,7 @@ export default function Login() {
             )}
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">Email</label>
+              <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
                 <input
@@ -107,7 +107,7 @@ export default function Login() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">Password</label>
+              <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>Password</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
                 <input

@@ -62,7 +62,7 @@ export default function Shop() {
             <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wide" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
               {filters.category || 'All Products'}
             </h1>
-            <p className="text-[#6b7280] text-sm mt-2">
+            <p className="mt-2" style={{ color: '#6b7280', fontSize: '13px', fontFamily: 'Space Grotesk, sans-serif' }}>
               {sorted.length > 0 ? `${sorted.length} products` : ''}
             </p>
           </div>

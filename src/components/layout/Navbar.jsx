@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { useAuthActions } from '@convex-dev/auth/react'
@@ -26,6 +27,14 @@ export default function Navbar() {
   const mobileMenuOpen = useSelector(selectMobileMenuOpen)
   const me = useQuery(api.users.getMe)
   const isAdmin = me?.role === 'admin'
+  const [scrolled, setScrolled] = useState(false)
+  const headerRef = useRef(null)
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const handleSignOut = async () => {
     await signOut()
@@ -36,50 +45,90 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 glass-strong border-b border-white/10" style={{ height: '70px' }}>
+      <header
+        ref={headerRef}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+        style={{
+          height: '68px',
+          background: scrolled
+            ? 'rgba(10,10,10,0.92)'
+            : 'rgba(10,10,10,0.6)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          borderBottom: scrolled
+            ? '1px solid rgba(255,255,255,0.1)'
+            : '1px solid rgba(255,255,255,0.05)',
+          boxShadow: scrolled ? '0 4px 30px rgba(0,0,0,0.4)' : 'none',
+        }}
+      >
         <div className="container flex items-center justify-between h-full">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group" onClick={() => dispatch(closeMobileMenu())}>
-            <Zap className="w-7 h-7 group-hover:animate-pulse-neon transition-all" style={{color:'#39ff14'}} />
+          <Link
+            to="/"
+            className="flex items-center gap-2.5 group"
+            onClick={() => dispatch(closeMobileMenu())}
+          >
+            <div className="relative">
+              <Zap
+                className="w-6 h-6 transition-all duration-300 group-hover:drop-shadow-[0_0_8px_#39ff14]"
+                style={{ color: '#39ff14' }}
+              />
+            </div>
             <span
-              className="text-[22px] font-black tracking-wider uppercase"
-              style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14', textShadow: '0 0 10px #39ff14' }}
+              className="text-[20px] font-black tracking-wide uppercase leading-none"
+              style={{
+                fontFamily: 'Orbitron, monospace',
+                color: '#39ff14',
+                textShadow: scrolled ? '0 0 12px rgba(57,255,20,0.5)' : 'none',
+                transition: 'text-shadow 0.3s ease',
+              }}
             >
               NeechBakra
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-10">
+          <nav className="hidden md:flex items-center gap-1">
             {navLinks.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 end={l.to === '/'}
                 className={({ isActive }) =>
-                  `text-sm font-semibold uppercase tracking-widest transition-colors duration-200 ${
-                    isActive ? 'text-[#39ff14]' : 'text-[#e8e8e8] hover:text-[#39ff14]'
-                  }`
+                  `relative px-4 py-2 text-[13px] font-semibold uppercase tracking-[0.08em] transition-colors duration-200 rounded-lg
+                  ${isActive ? 'text-[#39ff14]' : 'text-[#9ca3af] hover:text-[#e8e8e8]'}`
                 }
-                style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               >
-                {l.label}
+                {({ isActive }) => (
+                  <>
+                    {l.label}
+                    {isActive && (
+                      <span
+                        className="absolute bottom-0.5 left-1/2 -translate-x-1/2 h-[2px] rounded-full"
+                        style={{ background: '#39ff14', width: '20px', boxShadow: '0 0 6px #39ff14' }}
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             ))}
           </nav>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-0.5">
             {/* Wishlist */}
             <Link
               to="/wishlist"
-              className="relative p-2 text-[#e8e8e8] hover:text-[#8b5cf6] transition-colors"
+              className="relative p-2.5 rounded-lg text-[#9ca3af] hover:text-[#8b5cf6] hover:bg-white/5 transition-all duration-200"
               aria-label="Wishlist"
             >
               <Heart className="w-5 h-5" />
               {wishlistItems.length > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center"
-                  style={{ background: '#8b5cf6', color: '#fff' }}>
+                <span
+                  className="absolute top-1.5 right-1.5 w-[14px] h-[14px] rounded-full text-[9px] font-bold flex items-center justify-center"
+                  style={{ background: '#8b5cf6', color: '#fff' }}
+                >
                   {wishlistItems.length}
                 </span>
               )}
@@ -88,13 +137,15 @@ export default function Navbar() {
             {/* Cart */}
             <button
               onClick={() => dispatch(toggleCart())}
-              className="relative p-2 text-[#e8e8e8] hover:text-[#39ff14] transition-colors"
+              className="relative p-2.5 rounded-lg text-[#9ca3af] hover:text-[#39ff14] hover:bg-white/5 transition-all duration-200"
               aria-label="Cart"
             >
               <ShoppingBag className="w-5 h-5" />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center"
-                  style={{ background: '#39ff14', color: '#0a0a0a' }}>
+                <span
+                  className="absolute top-1.5 right-1.5 w-[14px] h-[14px] rounded-full text-[9px] font-bold flex items-center justify-center"
+                  style={{ background: '#39ff14', color: '#0a0a0a' }}
+                >
                   {cartCount}
                 </span>
               )}
@@ -102,29 +153,58 @@ export default function Navbar() {
 
             {/* Auth */}
             {me ? (
-              <div className="hidden md:flex items-center gap-2">
+              <div className="hidden md:flex items-center gap-0.5">
                 {isAdmin && (
-                  <Link to="/admin" className="p-2 text-[#e8e8e8] hover:text-[#39ff14] transition-colors" aria-label="Admin">
+                  <Link
+                    to="/admin"
+                    className="p-2.5 rounded-lg text-[#9ca3af] hover:text-[#39ff14] hover:bg-white/5 transition-all duration-200"
+                    aria-label="Admin"
+                  >
                     <LayoutDashboard className="w-5 h-5" />
                   </Link>
                 )}
-                <Link to="/profile" className="p-2 text-[#e8e8e8] hover:text-[#39ff14] transition-colors" aria-label="Profile">
+                <Link
+                  to="/profile"
+                  className="p-2.5 rounded-lg text-[#9ca3af] hover:text-[#39ff14] hover:bg-white/5 transition-all duration-200"
+                  aria-label="Profile"
+                >
                   <User className="w-5 h-5" />
                 </Link>
-                <button onClick={handleSignOut} className="p-2 text-[#e8e8e8] hover:text-red-400 transition-colors" aria-label="Sign out">
+                <button
+                  onClick={handleSignOut}
+                  className="p-2.5 rounded-lg text-[#9ca3af] hover:text-red-400 hover:bg-red-400/5 transition-all duration-200"
+                  aria-label="Sign out"
+                >
                   <LogOut className="w-5 h-5" />
                 </button>
               </div>
             ) : (
-              <Link to="/auth" className="hidden md:block btn-neon py-2 px-4 text-xs">
+              <Link
+                to="/auth"
+                className="hidden md:flex items-center gap-2 ml-2 px-4 py-2 rounded-lg text-[13px] font-semibold uppercase tracking-[0.08em] transition-all duration-200"
+                style={{
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  background: 'rgba(57,255,20,0.1)',
+                  color: '#39ff14',
+                  border: '1px solid rgba(57,255,20,0.3)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(57,255,20,0.18)'
+                  e.currentTarget.style.boxShadow = '0 0 16px rgba(57,255,20,0.2)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(57,255,20,0.1)'
+                  e.currentTarget.style.boxShadow = 'none'
+                }}
+              >
                 Login
               </Link>
             )}
 
-            {/* Mobile menu toggle */}
+            {/* Mobile toggle */}
             <button
               onClick={() => dispatch(toggleMobileMenu())}
-              className="md:hidden p-2 text-[#e8e8e8] hover:text-[#39ff14] transition-colors"
+              className="md:hidden p-2.5 rounded-lg text-[#9ca3af] hover:text-[#e8e8e8] hover:bg-white/5 transition-all duration-200 ml-1"
               aria-label="Menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -134,7 +214,14 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden glass-strong border-t border-white/10 py-4 px-6 flex flex-col gap-4 animate-slide-in-up">
+          <div
+            className="md:hidden border-t py-5 px-5 flex flex-col gap-1 animate-slide-in-up"
+            style={{
+              background: 'rgba(10,10,10,0.98)',
+              backdropFilter: 'blur(20px)',
+              borderColor: 'rgba(255,255,255,0.08)',
+            }}
+          >
             {navLinks.map((l) => (
               <NavLink
                 key={l.to}
@@ -142,31 +229,67 @@ export default function Navbar() {
                 end={l.to === '/'}
                 onClick={() => dispatch(closeMobileMenu())}
                 className={({ isActive }) =>
-                  `text-base font-bold uppercase tracking-widest transition-colors ${
-                    isActive ? 'text-[#39ff14]' : 'text-[#e8e8e8]'
+                  `px-4 py-3 rounded-xl text-[15px] font-semibold uppercase tracking-[0.06em] transition-colors ${
+                    isActive
+                      ? 'text-[#39ff14] bg-[#39ff14]/8'
+                      : 'text-[#9ca3af] hover:text-[#e8e8e8] hover:bg-white/4'
                   }`
                 }
-                style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                style={{ fontFamily: 'Space Grotesk, sans-serif' }}
               >
                 {l.label}
               </NavLink>
             ))}
-            <hr className="border-white/10" />
+            <div className="my-2" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }} />
             {me ? (
               <>
-                <Link to="/profile" onClick={() => dispatch(closeMobileMenu())} className="text-base font-bold text-[#e8e8e8] uppercase tracking-widest" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Profile</Link>
-                <Link to="/orders" onClick={() => dispatch(closeMobileMenu())} className="text-base font-bold text-[#e8e8e8] uppercase tracking-widest" style={{ fontFamily: 'Rajdhani, sans-serif' }}>My Orders</Link>
-                {isAdmin && <Link to="/admin" onClick={() => dispatch(closeMobileMenu())} className="text-base font-bold text-[#39ff14] uppercase tracking-widest" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Admin</Link>}
-                <button onClick={handleSignOut} className="text-left text-base font-bold text-red-400 uppercase tracking-widest" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Sign Out</button>
+                <Link
+                  to="/profile"
+                  onClick={() => dispatch(closeMobileMenu())}
+                  className="px-4 py-3 rounded-xl text-[15px] font-semibold uppercase tracking-[0.06em] text-[#9ca3af] hover:text-[#e8e8e8]"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  Profile
+                </Link>
+                <Link
+                  to="/orders"
+                  onClick={() => dispatch(closeMobileMenu())}
+                  className="px-4 py-3 rounded-xl text-[15px] font-semibold uppercase tracking-[0.06em] text-[#9ca3af] hover:text-[#e8e8e8]"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  My Orders
+                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    onClick={() => dispatch(closeMobileMenu())}
+                    className="px-4 py-3 rounded-xl text-[15px] font-semibold uppercase tracking-[0.06em]"
+                    style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#39ff14' }}
+                  >
+                    Admin Panel
+                  </Link>
+                )}
+                <button
+                  onClick={handleSignOut}
+                  className="text-left px-4 py-3 rounded-xl text-[15px] font-semibold uppercase tracking-[0.06em] text-red-400"
+                  style={{ fontFamily: 'Space Grotesk, sans-serif' }}
+                >
+                  Sign Out
+                </button>
               </>
             ) : (
-              <Link to="/auth" onClick={() => dispatch(closeMobileMenu())} className="btn-neon w-full justify-center">Login / Register</Link>
+              <Link
+                to="/auth"
+                onClick={() => dispatch(closeMobileMenu())}
+                className="btn-neon justify-center mt-2"
+              >
+                Login / Register
+              </Link>
             )}
           </div>
         )}
       </header>
 
-      {/* Cart Drawer */}
       <CartDrawer />
     </>
   )

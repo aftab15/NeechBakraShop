@@ -97,7 +97,7 @@ export default function CartDrawer() {
                     >
                       {item.name}
                     </Link>
-                    <p className="text-xs text-[#6b7280] mt-0.5">Size: {item.size}</p>
+                    <p className="mt-1" style={{ fontSize: '11px', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>Size: {item.size}</p>
                     <div className="flex items-center justify-between mt-2">
                       <QuantitySelector
                         value={item.quantity}
@@ -129,12 +129,12 @@ export default function CartDrawer() {
         {items.length > 0 && (
           <div className="px-6 py-5 border-t border-white/10 flex flex-col gap-4">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-[#6b7280]">Subtotal</span>
+              <span style={{ fontSize: '13px', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>Subtotal</span>
               <span className="text-xl font-black" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#39ff14' }}>
                 {formatPrice(total)}
               </span>
             </div>
-            <p className="text-xs text-[#6b7280] -mt-2">Shipping & taxes calculated at checkout</p>
+            <p className="-mt-2" style={{ fontSize: '11px', color: '#4b5563', fontFamily: 'Space Grotesk, sans-serif' }}>Shipping & taxes calculated at checkout</p>
             <Link
               to="/checkout"
               onClick={() => dispatch(closeCart())}
