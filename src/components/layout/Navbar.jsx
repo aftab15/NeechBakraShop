@@ -9,6 +9,7 @@ import { selectCartCount, toggleCart } from '../../features/cart/cartSlice'
 import { selectWishlistItems } from '../../features/wishlist/wishlistSlice'
 import { toggleMobileMenu, selectMobileMenuOpen, closeMobileMenu } from '../../features/ui/uiSlice'
 import CartDrawer from '../cart/CartDrawer'
+import Logo from '../common/Logo'
 import toast from 'react-hot-toast'
 
 const navLinks = [
@@ -71,9 +72,11 @@ export default function Navbar() {
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-2.5 group"
             onClick={() => dispatch(closeMobileMenu())}
+            aria-label="NeechBakra home"
           >
+            <Logo size={32} className="group-hover:opacity-80 transition-opacity" />
             <span
               style={{
                 fontFamily: 'Orbitron, monospace',
