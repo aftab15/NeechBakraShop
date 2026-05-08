@@ -48,7 +48,7 @@ export default function AdminProducts() {
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <Link to="/admin" className="flex items-center gap-1 text-xs text-[#6b7280] hover:text-[#39ff14] transition-colors mb-2">
+            <Link to="/admin" className="flex items-center gap-1 text-xs text-[#6b7280] hover:text-[#FF3500] transition-colors mb-2">
               <ChevronLeft className="w-3 h-3" /> Back to Dashboard
             </Link>
             <h1 className="text-4xl md:text-5xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
@@ -92,7 +92,7 @@ export default function AdminProducts() {
                       <span className="text-xs text-[#9ca3af]">{product.category}</span>
                     </td>
                     <td className="p-4">
-                      <span className="text-sm font-bold" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(product.price)}</span>
+                      <span className="text-sm font-bold" style={{ color: '#FF3500', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(product.price)}</span>
                     </td>
                     <td className="p-4 hidden md:table-cell">
                       <span className={`text-sm ${product.stock > 0 ? 'text-[#9ca3af]' : 'text-red-400'}`}>{product.stock}</span>
@@ -101,7 +101,7 @@ export default function AdminProducts() {
                       <button
                         onClick={() => handleToggleActive(product._id, product.isActive)}
                         className="relative w-10 h-5 rounded-full transition-all"
-                        style={{ background: product.isActive ? '#39ff14' : 'rgba(255,255,255,0.1)' }}
+                        style={{ background: product.isActive ? '#FF3500' : 'rgba(255,255,255,0.1)' }}
                         aria-label="Toggle active"
                       >
                         <span
@@ -114,7 +114,7 @@ export default function AdminProducts() {
                       <div className="flex items-center gap-2 justify-end">
                         <button
                           onClick={() => { setEditing(product); setShowForm(true) }}
-                          className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#9ca3af] hover:text-[#39ff14]"
+                          className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#9ca3af] hover:text-[#FF3500]"
                           aria-label="Edit"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -300,10 +300,10 @@ function ProductFormModal({ product, categories, onClose, createProduct, updateP
                   className="px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wide transition-all"
                   style={{
                     fontFamily: 'Rajdhani, sans-serif',
-                    background: selectedSizes.includes(s) ? '#39ff14' : 'rgba(255,255,255,0.05)',
+                    background: selectedSizes.includes(s) ? '#FF3500' : 'rgba(255,255,255,0.05)',
                     color: selectedSizes.includes(s) ? '#0a0a0a' : '#9ca3af',
                     border: '1px solid',
-                    borderColor: selectedSizes.includes(s) ? '#39ff14' : 'rgba(255,255,255,0.1)',
+                    borderColor: selectedSizes.includes(s) ? '#FF3500' : 'rgba(255,255,255,0.1)',
                   }}
                 >
                   {s}
@@ -320,11 +320,11 @@ function ProductFormModal({ product, categories, onClose, createProduct, updateP
 
           <div className="flex items-center gap-6">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" {...register('isFeatured')} className="accent-[#39ff14] w-4 h-4" />
+              <input type="checkbox" {...register('isFeatured')} className="accent-[#FF3500] w-4 h-4" />
               <span className="text-sm text-[#9ca3af]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Featured</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" {...register('isActive')} className="accent-[#39ff14] w-4 h-4" />
+              <input type="checkbox" {...register('isActive')} className="accent-[#FF3500] w-4 h-4" />
               <span className="text-sm text-[#9ca3af]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Active</span>
             </label>
           </div>
@@ -348,7 +348,7 @@ function ProductFormModal({ product, categories, onClose, createProduct, updateP
             font-size: 14px;
             transition: all 0.2s;
           }
-          .admin-input:focus { outline: none; border-color: #39ff14; }
+          .admin-input:focus { outline: none; border-color: #FF3500; }
         `}</style>
       </div>
     </div>

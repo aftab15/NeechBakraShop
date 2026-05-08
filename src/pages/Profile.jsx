@@ -32,24 +32,29 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen py-10">
+    <div className="min-h-screen py-14 md:py-20" style={{ background: '#080808' }}>
       <div className="container max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-black uppercase mb-8" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-          My Profile
-        </h1>
+        <div style={{ borderBottom: '1px solid rgba(255,255,255,0.07)', paddingBottom: '24px', marginBottom: '40px' }}>
+          <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', display: 'block', marginBottom: '10px' }}>
+            Account
+          </span>
+          <h1 className="uppercase font-black leading-none" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(32px, 5vw, 56px)', color: '#F0EBE3' }}>
+            My Profile
+          </h1>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-6">
           <aside className="md:col-span-1">
-            <div className="glass rounded-2xl p-6 flex flex-col gap-3" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
-              <div className="flex items-center gap-3 pb-4 border-b border-white/10">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(57,255,20,0.1)' }}>
-                  <User className="w-6 h-6" style={{ color: '#39ff14' }} />
+            <div className="flex flex-col gap-2 p-7" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px' }}>
+              <div className="flex items-center gap-3 pb-5 mb-2" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+                <div className="w-10 h-10 flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,53,0,0.08)', border: '1px solid rgba(255,53,0,0.2)', borderRadius: '3px' }}>
+                  <User className="w-5 h-5" style={{ color: '#FF3500' }} />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-sm font-bold truncate" style={{ color: '#e8e8e8', fontFamily: 'Rajdhani, sans-serif' }}>
+                  <p className="font-bold truncate" style={{ color: '#F0EBE3', fontFamily: 'Rajdhani, sans-serif', fontSize: '14px' }}>
                     {me.name || 'NeechBakra Fan'}
                   </p>
-                  <p className="text-xs text-[#6b7280] truncate">{me.email}</p>
+                  <p className="truncate" style={{ fontSize: '11px', color: '#555', fontFamily: 'Space Grotesk, sans-serif' }}>{me.email}</p>
                 </div>
               </div>
 
@@ -62,8 +67,10 @@ export default function Profile() {
 
               <button
                 onClick={async () => { await signOut(); toast.success('Signed out') }}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-red-400 hover:bg-white/5 transition-colors text-left"
-                style={{ fontFamily: 'Rajdhani, sans-serif' }}
+                className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-left transition-colors"
+                style={{ fontFamily: 'Space Grotesk, sans-serif', borderRadius: '3px', color: '#ef4444' }}
+                onMouseEnter={e => e.currentTarget.style.background = 'rgba(239,68,68,0.06)'}
+                onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
               >
                 <LogOut className="w-4 h-4" /> Sign Out
               </button>
@@ -71,17 +78,23 @@ export default function Profile() {
           </aside>
 
           <section className="md:col-span-2">
-            <div className="glass rounded-2xl p-6 md:p-8" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="p-10 md:p-12" style={{ background: '#111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px' }}>
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
+                <h2 className="uppercase font-black" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: '22px', color: '#F0EBE3' }}>
                   Account Details
                 </h2>
                 {!editing ? (
-                  <button onClick={() => setEditing(true)} className="text-sm font-bold uppercase tracking-widest text-[#39ff14] hover:underline" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                  <button
+                    onClick={() => setEditing(true)}
+                    style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#FF3500', fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
                     Edit
                   </button>
                 ) : (
-                  <button onClick={() => setEditing(false)} className="text-sm font-bold uppercase tracking-widest text-[#6b7280] hover:text-[#e8e8e8]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+                  <button
+                    onClick={() => setEditing(false)}
+                    style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.14em', textTransform: 'uppercase', color: '#555', fontFamily: 'Space Grotesk, sans-serif' }}
+                  >
                     Cancel
                   </button>
                 )}
@@ -90,37 +103,45 @@ export default function Profile() {
               {editing ? (
                 <form onSubmit={handleSubmit(onSave)} className="flex flex-col gap-4">
                   <div>
-                    <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">Full Name</label>
+                    <label style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', display: 'block', marginBottom: '8px' }}>
+                      Full Name
+                    </label>
                     <div className="relative">
-                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
+                      <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#555' }} />
                       <input
                         type="text"
                         defaultValue={me.name}
                         {...register('name', { required: 'Required' })}
-                        className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 text-[#e8e8e8] focus:outline-none focus:border-[#39ff14] transition-colors"
+                        className="w-full pl-10 pr-4 py-3 transition-colors focus:outline-none"
+                        style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '3px', color: '#F0EBE3', fontSize: '14px', fontFamily: 'Space Grotesk, sans-serif' }}
+                        onFocus={e => e.target.style.borderColor = '#FF3500'}
+                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                       />
                     </div>
                     {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name.message}</p>}
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-2 block">Phone</label>
+                    <label style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', display: 'block', marginBottom: '8px' }}>
+                      Phone
+                    </label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6b7280]" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#555' }} />
                       <input
                         type="tel"
                         defaultValue={me.phone}
-                        {...register('phone', {
-                          pattern: { value: /^[0-9]{10}$/, message: '10 digits' },
-                        })}
+                        {...register('phone', { pattern: { value: /^[0-9]{10}$/, message: '10 digits' } })}
                         placeholder="9876543210"
-                        className="w-full pl-10 pr-4 py-3 rounded-lg bg-white/5 border border-white/10 text-[#e8e8e8] focus:outline-none focus:border-[#39ff14] transition-colors"
+                        className="w-full pl-10 pr-4 py-3 transition-colors focus:outline-none"
+                        style={{ background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '3px', color: '#F0EBE3', fontSize: '14px', fontFamily: 'Space Grotesk, sans-serif' }}
+                        onFocus={e => e.target.style.borderColor = '#FF3500'}
+                        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
                       />
                     </div>
                     {errors.phone && <p className="text-xs text-red-400 mt-1">{errors.phone.message}</p>}
                   </div>
 
-                  <button type="submit" className="btn-neon self-start mt-2">
+                  <button type="submit" className="btn-neon self-start mt-2 gap-2">
                     <Save className="w-4 h-4" /> Save Changes
                   </button>
                 </form>
@@ -143,12 +164,13 @@ function NavItem({ to, icon: Icon, label, active }) {
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all"
+      className="flex items-center gap-3 px-4 py-3 text-sm font-medium transition-all"
       style={{
-        fontFamily: 'Rajdhani, sans-serif',
-        background: active ? 'rgba(57,255,20,0.08)' : 'transparent',
-        color: active ? '#39ff14' : '#9ca3af',
-        border: active ? '1px solid rgba(57,255,20,0.2)' : '1px solid transparent',
+        fontFamily: 'Space Grotesk, sans-serif',
+        borderRadius: '3px',
+        background: active ? 'rgba(255,53,0,0.08)' : 'transparent',
+        color: active ? '#FF3500' : '#888',
+        border: active ? '1px solid rgba(255,53,0,0.2)' : '1px solid transparent',
       }}
     >
       <Icon className="w-4 h-4" /> {label}
@@ -159,12 +181,12 @@ function NavItem({ to, icon: Icon, label, active }) {
 function Detail({ icon: Icon, label, value }) {
   return (
     <div className="flex items-start gap-3">
-      <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.05)' }}>
-        <Icon className="w-4 h-4 text-[#9ca3af]" />
+      <div className="w-9 h-9 flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,255,255,0.04)', borderRadius: '3px' }}>
+        <Icon className="w-4 h-4" style={{ color: '#555' }} />
       </div>
       <div>
-        <p className="text-xs uppercase tracking-widest text-[#6b7280]">{label}</p>
-        <p className="text-base font-medium text-[#e8e8e8]">{value}</p>
+        <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '3px' }}>{label}</p>
+        <p style={{ fontSize: '14px', color: '#F0EBE3', fontFamily: 'Space Grotesk, sans-serif' }}>{value}</p>
       </div>
     </div>
   )

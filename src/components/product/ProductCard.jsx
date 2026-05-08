@@ -1,7 +1,7 @@
 import { useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { Heart, ShoppingBag, Eye, Zap } from 'lucide-react'
+import { Heart, ShoppingBag, MoveRight } from 'lucide-react'
 import { addToCart, openCart } from '../../features/cart/cartSlice'
 import { toggleWishlist, selectIsWishlisted } from '../../features/wishlist/wishlistSlice'
 import { formatPrice, discountPercent } from '../../lib/utils'
@@ -34,7 +34,7 @@ export default function ProductCard({ product }) {
       gradientClass: product.gradientClass,
     }))
     dispatch(openCart())
-    toast.success(`${product.name} added to cart!`)
+    toast.success(`${product.name} added!`)
   }
 
   const handleWishlist = (e) => {
@@ -48,9 +48,7 @@ export default function ProductCard({ product }) {
       price: product.price,
       gradientClass: product.gradientClass,
     }))
-    toast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist! 💜', {
-      icon: isWishlisted ? '💔' : '💜',
-    })
+    toast(isWishlisted ? 'Removed from wishlist' : 'Saved to wishlist', { icon: isWishlisted ? '♡' : '♥' })
   }
 
   const discount = discountPercent(product.price, product.compareAtPrice)
@@ -60,166 +58,130 @@ export default function ProductCard({ product }) {
     <Link
       ref={cardRef}
       to={`/shop/${product.slug}`}
-      className="group relative flex flex-col rounded-2xl overflow-hidden border-glow"
-      style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        transformStyle: 'preserve-3d',
-        willChange: 'transform',
-        transition: 'box-shadow 0.3s ease, border-color 0.3s ease',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(57,255,20,0.25)'
-        e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(57,255,20,0.08)'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'
-        e.currentTarget.style.boxShadow = 'none'
-      }}
+      className="group flex flex-col"
+      style={{ transformStyle: 'preserve-3d', willChange: 'transform' }}
       aria-label={product.name}
     >
-      {/* Image area */}
-      <div className={`relative overflow-hidden ${product.gradientClass || 'product-gradient-1'}`}
-        style={{ aspectRatio: '4/5' }}>
+      {/* Image */}
+      <div
+        className={`relative overflow-hidden ${product.gradientClass || 'product-gradient-1'}`}
+        style={{ aspectRatio: '3/4', borderRadius: '4px' }}
+      >
         {product.images?.[0] ? (
           <img
             src={product.images[0]}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             loading="lazy"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center noise-overlay">
             <span
-              className="text-7xl font-black opacity-15 select-none"
-              style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}
+              className="text-[80px] font-black select-none"
+              style={{ fontFamily: 'Orbitron, monospace', color: 'rgba(255,255,255,0.06)', letterSpacing: '-0.04em' }}
             >
               NB
             </span>
           </div>
         )}
 
-        {/* Scan-line effect on hover */}
+        {/* Gradient fade at bottom */}
         <div
-          className="absolute left-0 right-0 h-px opacity-0 group-hover:opacity-60 pointer-events-none"
-          style={{
-            background: 'linear-gradient(90deg, transparent, #39ff14, transparent)',
-            animation: 'scan-line 2s linear infinite',
-            top: 0,
-          }}
+          className="absolute inset-x-0 bottom-0 h-2/5 pointer-events-none"
+          style={{ background: 'linear-gradient(to top, rgba(8,8,8,0.85) 0%, transparent 100%)' }}
         />
-
-        {/* Dark gradient at bottom of image */}
-        <div className="absolute inset-x-0 bottom-0 h-1/3 pointer-events-none"
-          style={{ background: 'linear-gradient(to top, rgba(10,10,10,0.8) 0%, transparent 100%)' }} />
-
-        {/* Overlay actions */}
-        <div className="absolute inset-0 flex items-center justify-center gap-3
-          opacity-0 group-hover:opacity-100 transition-all duration-300"
-          style={{ background: 'rgba(0,0,0,0.3)', backdropFilter: 'blur(4px)' }}>
-          <button
-            onClick={handleWishlist}
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-            style={{
-              background: isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.12)',
-              border: `1px solid ${isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.2)'}`,
-              backdropFilter: 'blur(8px)',
-            }}
-            aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
-          >
-            <Heart className="w-4.5 h-4.5" fill={isWishlisted ? '#fff' : 'none'} color="#fff" />
-          </button>
-          <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/shop/${product.slug}`) }}
-            className="w-11 h-11 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-110 active:scale-95"
-            style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(8px)' }}
-            aria-label="View product"
-          >
-            <Eye className="w-4.5 h-4.5 text-white" />
-          </button>
-        </div>
 
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5">
           {product.isFeatured && (
-            <span className="tag" style={{ background: '#39ff14', color: '#0a0a0a' }}>
-              <Zap className="w-2.5 h-2.5 mr-0.5" /> Featured
-            </span>
+            <span className="tag" style={{ background: '#FF3500', color: '#000' }}>Drop</span>
           )}
           {discount > 0 && (
-            <span className="tag" style={{ background: '#ef4444', color: '#fff' }}>
-              -{discount}%
-            </span>
+            <span className="tag" style={{ background: '#000', color: '#F0EBE3', border: '1px solid rgba(255,255,255,0.15)' }}>-{discount}%</span>
           )}
           {outOfStock && (
-            <span className="tag" style={{ background: 'rgba(55,65,81,0.9)', color: '#9ca3af' }}>
-              Sold Out
-            </span>
+            <span className="tag" style={{ background: 'rgba(0,0,0,0.8)', color: '#666', border: '1px solid rgba(255,255,255,0.1)' }}>Sold Out</span>
           )}
         </div>
-      </div>
 
-      {/* Info */}
-      <div className="p-5 flex flex-col gap-2.5 flex-1">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.15em]" style={{ color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>
-          {product.category}
-        </p>
-        <h3
-          className="text-[15px] font-semibold leading-snug group-hover:text-[#39ff14] transition-colors duration-200 line-clamp-2"
-          style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#e8e8e8', letterSpacing: '-0.01em' }}
+        {/* Wishlist button — top right */}
+        <button
+          onClick={handleWishlist}
+          className="absolute top-3 right-3 w-8 h-8 rounded-sm flex items-center justify-center transition-all duration-200 opacity-0 group-hover:opacity-100 hover:scale-110"
+          style={{ background: isWishlisted ? '#FF3500' : 'rgba(8,8,8,0.75)', backdropFilter: 'blur(8px)' }}
+          aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          {product.name}
-        </h3>
+          <Heart className="w-3.5 h-3.5" fill={isWishlisted ? '#000' : 'none'} color={isWishlisted ? '#000' : '#F0EBE3'} />
+        </button>
 
-        {/* Sizes preview */}
-        {product.sizes?.length > 0 && product.sizes[0] !== 'ONE SIZE' && (
-          <div className="flex items-center gap-1 flex-wrap">
-            {product.sizes.slice(0, 4).map((s) => (
-              <span key={s} className="text-[9px] px-1.5 py-0.5 rounded"
-                style={{ border: '1px solid rgba(255,255,255,0.08)', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>
-                {s}
-              </span>
-            ))}
-            {product.sizes.length > 4 && (
-              <span className="text-[9px]" style={{ color: '#6b7280' }}>+{product.sizes.length - 4}</span>
-            )}
-          </div>
-        )}
-
-        {/* Price row */}
-        <div className="flex items-center justify-between mt-auto pt-3"
-          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-lg font-bold leading-none"
-              style={{ color: '#39ff14', fontFamily: 'Space Grotesk, sans-serif', letterSpacing: '-0.02em' }}>
-              {formatPrice(product.price)}
-            </span>
-            {product.compareAtPrice && (
-              <span className="text-xs line-through" style={{ color: '#4b5563' }}>
-                {formatPrice(product.compareAtPrice)}
-              </span>
-            )}
-          </div>
+        {/* Quick add — bottom overlay on hover */}
+        <div
+          className="absolute inset-x-0 bottom-0 flex items-center justify-between px-4 py-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300"
+          style={{ background: 'rgba(8,8,8,0.5)' }}
+        >
+          <span
+            className="text-[11px] font-semibold uppercase tracking-widest"
+            style={{ color: '#A89E94', fontFamily: 'Space Grotesk, sans-serif' }}
+          >
+            {outOfStock ? 'Sold Out' : product.sizes?.[0] !== 'ONE SIZE' ? 'Select Size' : 'One Size'}
+          </span>
           <button
             onClick={handleAddToCart}
             disabled={outOfStock}
-            className="w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:scale-100"
+            className="flex items-center gap-2 font-bold uppercase tracking-widest transition-all disabled:opacity-40 active:scale-95"
             style={{
-              background: outOfStock ? '#1a1a1a' : 'linear-gradient(135deg, #39ff14, #28cc0f)',
-              boxShadow: outOfStock ? 'none' : '0 4px 14px rgba(57,255,20,0.3)',
+              background: '#FF3500',
+              color: '#000',
+              borderRadius: '2px',
+              fontFamily: 'Space Grotesk, sans-serif',
+              fontSize: '12px',
+              padding: '10px 18px',
             }}
             aria-label="Add to cart"
           >
-            <ShoppingBag className="w-4 h-4" color={outOfStock ? '#6b7280' : '#0a0a0a'} />
+            <ShoppingBag className="w-4 h-4" /> Add to Cart
           </button>
         </div>
       </div>
 
-      {/* Bottom accent line */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-        style={{ background: 'linear-gradient(90deg, transparent, #39ff14, transparent)' }}
-      />
+      {/* Info */}
+      <div className="pt-3 pb-1 flex flex-col gap-1">
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex-1 min-w-0">
+            <p
+              className="text-[10px] font-semibold uppercase tracking-[0.14em] mb-0.5"
+              style={{ color: '#666666', fontFamily: 'Space Grotesk, sans-serif' }}
+            >
+              {product.category}
+            </p>
+            <h3
+              className="text-[14px] font-semibold leading-snug group-hover:text-[#FF3500] transition-colors duration-200 line-clamp-2"
+              style={{ fontFamily: 'Space Grotesk, sans-serif', color: '#F0EBE3', letterSpacing: '-0.01em' }}
+            >
+              {product.name}
+            </h3>
+          </div>
+          <MoveRight
+            className="w-4 h-4 flex-shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-all duration-200 group-hover:translate-x-0.5"
+            style={{ color: '#FF3500' }}
+          />
+        </div>
+
+        {/* Price */}
+        <div className="flex items-center gap-2 mt-0.5">
+          <span
+            className="text-[15px] font-bold"
+            style={{ color: '#F0EBE3', fontFamily: 'Space Grotesk, sans-serif', letterSpacing: '-0.02em' }}
+          >
+            {formatPrice(product.price)}
+          </span>
+          {product.compareAtPrice && (
+            <span className="text-[12px] line-through" style={{ color: '#444444', fontFamily: 'Space Grotesk, sans-serif' }}>
+              {formatPrice(product.compareAtPrice)}
+            </span>
+          )}
+        </div>
+      </div>
     </Link>
   )
 }

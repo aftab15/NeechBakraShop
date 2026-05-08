@@ -5,6 +5,8 @@ import { useForm } from 'react-hook-form'
 import { Mail, MessageSquare, Send, MapPin, Clock, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
+const OVERLINE = { fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '16px', display: 'block' }
+
 export default function Contact() {
   const submit = useMutation(api.contact.submitContactMessage)
   const [submitting, setSubmitting] = useState(false)
@@ -31,121 +33,139 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-screen py-16 md:py-20">
-      <div className="container max-w-5xl mx-auto">
-        <div className="text-center mb-14">
-          <h1 className="text-5xl md:text-6xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-            Get in <span style={{ color: '#39ff14' }}>Touch</span>
+    <div className="min-h-screen" style={{ background: '#080808' }}>
+
+      {/* Hero */}
+      <section style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="container py-20 md:py-24">
+          <span style={OVERLINE}>Contact</span>
+          <h1 className="uppercase font-black leading-none mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(36px, 6vw, 72px)', color: '#F0EBE3' }}>
+            Get in <span style={{ color: '#FF3500' }}>Touch</span>
           </h1>
-          <p className="max-w-lg mx-auto" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
+          <p className="max-w-lg" style={{ color: '#666', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px', lineHeight: 1.7 }}>
             Got a question? Spotted a bug? Want to collab? Drop us a line — we read every message.
           </p>
         </div>
+      </section>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          {[
-            { icon: Mail, color: '#39ff14', title: 'Email', value: 'hello@neechbakra.com', href: 'mailto:hello@neechbakra.com' },
-            { icon: MessageSquare, color: '#8b5cf6', title: 'Support', value: 'support@neechbakra.com', href: 'mailto:support@neechbakra.com' },
-            { icon: MapPin, color: '#007cf0', title: 'Location', value: 'Mumbai, India' },
-          ].map(({ icon: Icon, color, title, value, href }) => {
-            const Wrap = href ? 'a' : 'div'
-            return (
-              <Wrap
-                key={title}
-                {...(href ? { href } : {})}
-                className="glass rounded-2xl p-7 flex items-start gap-5 transition-all hover:scale-[1.02]"
-                style={{ border: `1px solid ${color}33` }}
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `${color}1a` }}>
-                  <Icon className="w-5 h-5" style={{ color }} />
-                </div>
-                <div>
-                  <p className="text-xs uppercase tracking-widest text-[#6b7280] mb-1">{title}</p>
-                  <p className="text-sm font-bold" style={{ color: '#e8e8e8', fontFamily: 'Rajdhani, sans-serif' }}>{value}</p>
-                </div>
-              </Wrap>
-            )
-          })}
-        </div>
+      <section className="section">
+        <div className="container max-w-5xl">
 
-        <div className="glass-strong rounded-3xl p-8 md:p-12" style={{ border: '1px solid rgba(57,255,20,0.2)' }}>
-          {submitted ? (
-            <div className="text-center py-8">
-              <div className="w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6" style={{ background: 'rgba(57,255,20,0.1)' }}>
-                <CheckCircle2 className="w-10 h-10" style={{ color: '#39ff14' }} />
+          {/* Info cards */}
+          <div className="grid md:grid-cols-3 gap-px mb-14" style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px', overflow: 'hidden' }}>
+            {[
+              { icon: Mail,         title: 'Email',    value: 'hello@neechbakra.com',   href: 'mailto:hello@neechbakra.com' },
+              { icon: MessageSquare,title: 'Support',  value: 'support@neechbakra.com', href: 'mailto:support@neechbakra.com' },
+              { icon: MapPin,       title: 'Location', value: 'Mumbai, India' },
+            ].map(({ icon: Icon, title, value, href }, i) => {
+              const Wrap = href ? 'a' : 'div'
+              return (
+                <Wrap
+                  key={title}
+                  {...(href ? { href } : {})}
+                  className="flex items-start gap-6 transition-colors"
+                  style={{ padding: '36px 32px' }}
+                  style={{
+                    background: '#111',
+                    borderRight: i < 2 ? '1px solid rgba(255,255,255,0.07)' : 'none',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = '#161616'}
+                  onMouseLeave={e => e.currentTarget.style.background = '#111'}
+                >
+                  <div className="w-10 h-10 flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(255,53,0,0.08)', border: '1px solid rgba(255,53,0,0.2)', borderRadius: '3px' }}>
+                    <Icon className="w-4 h-4" style={{ color: '#FF3500' }} />
+                  </div>
+                  <div>
+                    <p style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.14em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '6px' }}>{title}</p>
+                    <p style={{ fontSize: '14px', fontWeight: 700, color: '#F0EBE3', fontFamily: 'Rajdhani, sans-serif' }}>{value}</p>
+                  </div>
+                </Wrap>
+              )
+            })}
+          </div>
+
+          {/* Form */}
+          <div style={{ background: '#111', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px', padding: '56px' }}>
+            {submitted ? (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 mx-auto flex items-center justify-center mb-6" style={{ background: 'rgba(255,53,0,0.08)', border: '1px solid rgba(255,53,0,0.2)', borderRadius: '4px' }}>
+                  <CheckCircle2 className="w-8 h-8" style={{ color: '#FF3500' }} />
+                </div>
+                <h2 className="text-3xl font-black uppercase mb-3" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#F0EBE3' }}>
+                  Message Sent
+                </h2>
+                <p className="mb-8" style={{ color: '#666', fontFamily: 'Space Grotesk, sans-serif', fontSize: '14px' }}>
+                  We'll get back to you within 24-48 hours.
+                </p>
+                <button onClick={() => setSubmitted(false)} className="btn-outline-neon">Send Another</button>
               </div>
-              <h2 className="text-3xl font-black uppercase mb-3" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-                Message sent!
-              </h2>
-              <p className="text-[#9ca3af] mb-6">We'll get back to you within 24-48 hours.</p>
-              <button onClick={() => setSubmitted(false)} className="btn-outline-neon">Send Another</button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit(onSubmit)} className="grid md:grid-cols-2 gap-5">
-              <Field label="Your Name" error={errors.name?.message}>
-                <input
-                  type="text"
-                  {...register('name', { required: 'Required', minLength: { value: 2, message: 'Too short' } })}
-                  placeholder="Your name"
-                  className="contact-input"
-                />
-              </Field>
-              <Field label="Email" error={errors.email?.message}>
-                <input
-                  type="email"
-                  {...register('email', { required: 'Required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } })}
-                  placeholder="you@example.com"
-                  className="contact-input"
-                />
-              </Field>
-              <div className="md:col-span-2">
-                <Field label="Subject" error={errors.subject?.message}>
+            ) : (
+              <form onSubmit={handleSubmit(onSubmit)} className="grid md:grid-cols-2 gap-6">
+                <Field label="Your Name" error={errors.name?.message}>
                   <input
                     type="text"
-                    {...register('subject', { required: 'Required' })}
-                    placeholder="What's this about?"
+                    {...register('name', { required: 'Required', minLength: { value: 2, message: 'Too short' } })}
+                    placeholder="Your name"
                     className="contact-input"
                   />
                 </Field>
-              </div>
-              <div className="md:col-span-2">
-                <Field label="Message" error={errors.message?.message}>
-                  <textarea
-                    rows={5}
-                    {...register('message', { required: 'Required', minLength: { value: 10, message: 'At least 10 characters' } })}
-                    placeholder="Tell us what's on your mind..."
-                    className="contact-input resize-none"
+                <Field label="Email" error={errors.email?.message}>
+                  <input
+                    type="email"
+                    {...register('email', { required: 'Required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email' } })}
+                    placeholder="you@example.com"
+                    className="contact-input"
                   />
                 </Field>
-              </div>
-              <div className="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-4">
-                <button type="submit" disabled={submitting} className="btn-neon disabled:opacity-50">
-                  <Send className="w-4 h-4" />
-                  {submitting ? 'Sending...' : 'Send Message'}
-                </button>
-                <p className="text-xs text-[#6b7280] flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> Typical response time: 24-48 hours
-                </p>
-              </div>
-            </form>
-          )}
+                <div className="md:col-span-2">
+                  <Field label="Subject" error={errors.subject?.message}>
+                    <input
+                      type="text"
+                      {...register('subject', { required: 'Required' })}
+                      placeholder="What's this about?"
+                      className="contact-input"
+                    />
+                  </Field>
+                </div>
+                <div className="md:col-span-2">
+                  <Field label="Message" error={errors.message?.message}>
+                    <textarea
+                      rows={5}
+                      {...register('message', { required: 'Required', minLength: { value: 10, message: 'At least 10 characters' } })}
+                      placeholder="Tell us what's on your mind..."
+                      className="contact-input resize-none"
+                    />
+                  </Field>
+                </div>
+                <div className="md:col-span-2 flex flex-col sm:flex-row sm:items-center gap-4">
+                  <button type="submit" disabled={submitting} className="btn-neon gap-2 disabled:opacity-50">
+                    <Send className="w-4 h-4" />
+                    {submitting ? 'Sending...' : 'Send Message'}
+                  </button>
+                  <p className="flex items-center gap-1.5" style={{ fontSize: '12px', color: '#555', fontFamily: 'Space Grotesk, sans-serif' }}>
+                    <Clock className="w-3 h-3" /> Typical response: 24-48 hours
+                  </p>
+                </div>
+              </form>
+            )}
+          </div>
         </div>
-      </div>
+      </section>
 
       <style>{`
         .contact-input {
           width: 100%;
           padding: 12px 16px;
-          border-radius: 10px;
-          background: rgba(255,255,255,0.04);
+          border-radius: 3px;
+          background: #0D0D0D;
           border: 1px solid rgba(255,255,255,0.1);
-          color: #e8e8e8;
+          color: #F0EBE3;
           font-size: 14px;
           font-family: inherit;
-          transition: border-color 0.2s, box-shadow 0.2s;
+          transition: border-color 0.2s;
         }
-        .contact-input:focus { outline: none; border-color: #39ff14; box-shadow: 0 0 0 3px rgba(57,255,20,0.08); }
-        .contact-input::placeholder { color: #4b5563; }
+        .contact-input:focus { outline: none; border-color: #FF3500; }
+        .contact-input::placeholder { color: #444; }
       `}</style>
     </div>
   )
@@ -154,7 +174,7 @@ export default function Contact() {
 function Field({ label, error, children }) {
   return (
     <div>
-      <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</label>
+      <label className="mb-2 block" style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.14em', color: '#555', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</label>
       {children}
       {error && <p className="mt-1" style={{ fontSize: '12px', color: '#ef4444', fontFamily: 'Space Grotesk, sans-serif' }}>{error}</p>}
     </div>

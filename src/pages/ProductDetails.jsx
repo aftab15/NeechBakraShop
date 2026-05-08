@@ -29,9 +29,9 @@ export default function ProductDetails() {
 
   if (!isPlaceholder && product === undefined) return <PageLoader />
   if (!product) return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: '#080808' }}>
       <div className="text-center">
-        <h2 className="text-3xl font-black text-[#e8e8e8] mb-4" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Product Not Found</h2>
+        <h2 className="text-3xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#F0EBE3' }}>Product Not Found</h2>
         <Link to="/shop" className="btn-neon">Back to Shop</Link>
       </div>
     </div>
@@ -70,27 +70,29 @@ export default function ProductDetails() {
       price: product.price,
       gradientClass: product.gradientClass,
     }))
-    toast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist! 💜', { icon: isWishlisted ? '💔' : '💜' })
+    toast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist!')
   }
 
   return (
-    <div className="min-h-screen py-10">
-      <div className="container">
+    <div className="min-h-screen" style={{ background: '#080808' }}>
+      <div className="container py-14 md:py-20">
+
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 mb-8" style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', color: '#6b7280' }}>
-          <Link to="/" className="hover:text-[#39ff14] transition-colors">Home</Link>
+        <nav className="flex items-center gap-2 mb-12" style={{ fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', color: '#555' }}>
+          <Link to="/" className="transition-colors hover:text-[#F0EBE3]">Home</Link>
           <ChevronRight className="w-3 h-3" />
-          <Link to="/shop" className="hover:text-[#39ff14] transition-colors">Shop</Link>
+          <Link to="/shop" className="transition-colors hover:text-[#F0EBE3]">Shop</Link>
           <ChevronRight className="w-3 h-3" />
-          <span style={{ color: '#e8e8e8' }}>{product.name}</span>
+          <span style={{ color: '#F0EBE3' }}>{product.name}</span>
         </nav>
 
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+
           {/* ── IMAGE GALLERY ── */}
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
             <div
-              className={`rounded-2xl overflow-hidden ${product.gradientClass || 'product-gradient-1'} noise-overlay`}
-              style={{ aspectRatio: '4/5', border: '1px solid rgba(255,255,255,0.08)' }}
+              className={`overflow-hidden ${product.gradientClass || 'product-gradient-1'} noise-overlay`}
+              style={{ aspectRatio: '4/5', borderRadius: '4px', border: '1px solid rgba(255,255,255,0.07)' }}
             >
               {product.images?.[activeImage] ? (
                 <img
@@ -100,18 +102,18 @@ export default function ProductDetails() {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-9xl font-black opacity-10 select-none" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>NB</span>
+                  <span className="text-9xl font-black select-none" style={{ fontFamily: 'Orbitron, monospace', color: 'rgba(255,255,255,0.04)' }}>NB</span>
                 </div>
               )}
             </div>
             {product.images?.length > 1 && (
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 {product.images.map((img, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveImage(i)}
-                    className="w-20 h-20 rounded-xl overflow-hidden transition-all"
-                    style={{ border: `2px solid ${activeImage === i ? '#39ff14' : 'rgba(255,255,255,0.1)'}`, boxShadow: activeImage === i ? '0 0 12px rgba(57,255,20,0.3)' : 'none' }}
+                    className="w-20 h-20 overflow-hidden flex-shrink-0 transition-all"
+                    style={{ borderRadius: '3px', border: `2px solid ${activeImage === i ? '#FF3500' : 'rgba(255,255,255,0.08)'}` }}
                   >
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
@@ -123,22 +125,22 @@ export default function ProductDetails() {
           {/* ── PRODUCT INFO ── */}
           <div className="flex flex-col gap-6">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.15em] mb-2" style={{ color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>
+              <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', display: 'block', marginBottom: '12px' }}>
                 {product.category}
-              </p>
-              <h1 className="text-4xl md:text-5xl font-black uppercase leading-tight mb-5" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
+              </span>
+              <h1 className="uppercase font-black leading-none mb-5" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(32px, 4vw, 52px)', color: '#F0EBE3' }}>
                 {product.name}
               </h1>
               <div className="flex items-center gap-4 flex-wrap">
-                <span className="text-4xl font-black" style={{ color: '#39ff14', fontFamily: 'Orbitron, monospace', letterSpacing: '-0.02em' }}>
+                <span className="font-black" style={{ color: '#F0EBE3', fontFamily: 'Orbitron, monospace', fontSize: '28px', letterSpacing: '-0.02em' }}>
                   {formatPrice(product.price)}
                 </span>
                 {product.compareAtPrice && (
                   <>
-                    <span className="text-xl line-through" style={{ color: '#4b5563', fontFamily: 'Space Grotesk, sans-serif' }}>
+                    <span className="text-lg line-through" style={{ color: '#444', fontFamily: 'Space Grotesk, sans-serif' }}>
                       {formatPrice(product.compareAtPrice)}
                     </span>
-                    <span className="tag" style={{ background: '#ef4444', color: '#fff' }}>
+                    <span className="tag" style={{ background: '#FF3500', color: '#000', borderRadius: '2px', fontSize: '10px', fontWeight: 700, padding: '2px 8px', letterSpacing: '0.08em' }}>
                       {discount}% OFF
                     </span>
                   </>
@@ -148,16 +150,17 @@ export default function ProductDetails() {
 
             {/* Stock */}
             <div className="flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full flex-shrink-0 ${product.stock > 0 ? '' : ''}`}
-                style={{ background: product.stock > 10 ? '#39ff14' : product.stock > 0 ? '#f59e0b' : '#ef4444', boxShadow: product.stock > 0 ? `0 0 6px ${product.stock > 10 ? '#39ff14' : '#f59e0b'}` : 'none' }}
+              <span
+                className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+                style={{ background: product.stock > 10 ? '#22c55e' : product.stock > 0 ? '#f59e0b' : '#ef4444' }}
               />
-              <span style={{ fontSize: '13px', color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif' }}>
-                {product.stock > 10 ? `In stock` : product.stock > 0 ? `Only ${product.stock} left!` : 'Out of stock'}
+              <span style={{ fontSize: '13px', color: '#666', fontFamily: 'Space Grotesk, sans-serif' }}>
+                {product.stock > 10 ? 'In stock' : product.stock > 0 ? `Only ${product.stock} left` : 'Out of stock'}
               </span>
             </div>
 
             {/* Description */}
-            <p style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px', lineHeight: '1.65' }}>
+            <p style={{ color: '#888', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px', lineHeight: 1.7 }}>
               {product.description}
             </p>
 
@@ -190,15 +193,15 @@ export default function ProductDetails() {
               </button>
               <button
                 onClick={handleWishlist}
-                className="w-12 h-12 rounded-xl flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                className="w-12 h-12 flex items-center justify-center transition-colors"
                 style={{
-                  background: isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.05)',
-                  border: `1px solid ${isWishlisted ? '#8b5cf6' : 'rgba(255,255,255,0.1)'}`,
-                  boxShadow: isWishlisted ? '0 4px 14px rgba(139,92,246,0.3)' : 'none',
+                  background: isWishlisted ? 'rgba(255,53,0,0.12)' : 'transparent',
+                  border: `1px solid ${isWishlisted ? 'rgba(255,53,0,0.4)' : 'rgba(255,255,255,0.1)'}`,
+                  borderRadius: '3px',
                 }}
                 aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
               >
-                <Heart className="w-5 h-5" fill={isWishlisted ? '#fff' : 'none'} color={isWishlisted ? '#fff' : '#9ca3af'} />
+                <Heart className="w-5 h-5" fill={isWishlisted ? '#FF3500' : 'none'} color={isWishlisted ? '#FF3500' : '#555'} />
               </button>
             </div>
 
@@ -208,8 +211,7 @@ export default function ProductDetails() {
                 {product.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-3 py-1 rounded-full"
-                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontSize: '12px', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}
+                    style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '2px', fontSize: '11px', color: '#555', fontFamily: 'Space Grotesk, sans-serif', padding: '3px 10px', letterSpacing: '0.06em' }}
                   >
                     #{tag}
                   </span>
@@ -218,16 +220,16 @@ export default function ProductDetails() {
             )}
 
             {/* Trust badges */}
-            <div className="grid grid-cols-2 gap-3 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="grid grid-cols-2 gap-3 pt-5" style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}>
               {[
-                { icon: Truck,    label: 'Free shipping over ₹999' },
-                { icon: Package,  label: 'Secure packaging'         },
-                { icon: RotateCcw,label: 'Easy 7-day returns'       },
-                { icon: Shield,   label: 'Razorpay secure checkout' },
+                { icon: Truck,     label: 'Free shipping over ₹999' },
+                { icon: Package,   label: 'Secure packaging'         },
+                { icon: RotateCcw, label: 'Easy 7-day returns'       },
+                { icon: Shield,    label: 'Razorpay secure checkout' },
               ].map(({ icon: Icon, label }) => (
                 <div key={label} className="flex items-center gap-2">
-                  <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#39ff14' }} />
-                  <span style={{ fontSize: '12px', color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</span>
+                  <Icon className="w-3.5 h-3.5 flex-shrink-0" style={{ color: '#FF3500' }} />
+                  <span style={{ fontSize: '12px', color: '#555', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</span>
                 </div>
               ))}
             </div>

@@ -5,9 +5,8 @@ export default function LoadingSpinner({ size = 'md', className = '' }) {
       <div
         className={`${sizes[size]} rounded-full border-2 border-transparent animate-spin`}
         style={{
-          borderTopColor: '#39ff14',
-          borderRightColor: 'rgba(57,255,20,0.3)',
-          boxShadow: '0 0 12px rgba(57,255,20,0.4)',
+          borderTopColor: '#FF3500',
+          borderRightColor: 'rgba(255,53,0,0.3)',
         }}
       />
     </div>
@@ -16,9 +15,9 @@ export default function LoadingSpinner({ size = 'md', className = '' }) {
 
 export function PageLoader() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#0a0a0a' }}>
+    <div className="min-h-screen flex flex-col items-center justify-center gap-4" style={{ background: '#080808' }}>
       <LoadingSpinner size="xl" />
-      <p className="text-[#6b7280] text-sm uppercase tracking-widest" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+      <p className="uppercase tracking-widest" style={{ color: '#555', fontSize: '12px', fontFamily: 'Space Grotesk, sans-serif' }}>
         Loading…
       </p>
     </div>

@@ -31,7 +31,7 @@ export default function AdminOrders() {
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <Link to="/admin" className="flex items-center gap-1 text-xs text-[#6b7280] hover:text-[#39ff14] transition-colors mb-2">
+            <Link to="/admin" className="flex items-center gap-1 text-xs text-[#6b7280] hover:text-[#FF3500] transition-colors mb-2">
               <ChevronLeft className="w-3 h-3" /> Back to Dashboard
             </Link>
             <h1 className="text-4xl md:text-5xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
@@ -44,7 +44,7 @@ export default function AdminOrders() {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-3 py-2 rounded-lg text-sm bg-white/5 border border-white/10 text-[#e8e8e8] focus:outline-none focus:border-[#39ff14]"
+              className="px-3 py-2 rounded-lg text-sm bg-white/5 border border-white/10 text-[#e8e8e8] focus:outline-none focus:border-[#FF3500]"
             >
               <option value="">All</option>
               {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
@@ -70,7 +70,7 @@ export default function AdminOrders() {
                 {orders.map((order) => (
                   <tr key={order._id} className="border-b border-white/5 hover:bg-white/[0.02]">
                     <td className="p-4">
-                      <p className="text-xs font-mono text-[#39ff14]">{order._id.slice(-10).toUpperCase()}</p>
+                      <p className="text-xs font-mono text-[#FF3500]">{order._id.slice(-10).toUpperCase()}</p>
                       <p className="text-xs text-[#6b7280] mt-0.5">{order.shippingAddress.fullName}</p>
                     </td>
                     <td className="p-4 hidden md:table-cell">
@@ -80,7 +80,7 @@ export default function AdminOrders() {
                       <span className="text-xs text-[#9ca3af]">{order.items.reduce((s, i) => s + i.quantity, 0)} items</span>
                     </td>
                     <td className="p-4">
-                      <span className="text-sm font-bold" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(order.total)}</span>
+                      <span className="text-sm font-bold" style={{ color: '#FF3500', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(order.total)}</span>
                     </td>
                     <td className="p-4">
                       <select
@@ -100,7 +100,7 @@ export default function AdminOrders() {
                     <td className="p-4 text-right">
                       <button
                         onClick={() => setViewing(order)}
-                        className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#9ca3af] hover:text-[#39ff14]"
+                        className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#9ca3af] hover:text-[#FF3500]"
                         aria-label="View"
                       >
                         <Eye className="w-4 h-4" />
@@ -137,7 +137,7 @@ function OrderDetailModal({ order, onClose }) {
         <div className="flex items-center justify-between mb-6">
           <div>
             <p className="text-xs text-[#6b7280] uppercase tracking-widest">Order</p>
-            <p className="text-lg font-mono text-[#39ff14]">{order._id.slice(-12).toUpperCase()}</p>
+            <p className="text-lg font-mono text-[#FF3500]">{order._id.slice(-12).toUpperCase()}</p>
           </div>
           <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 transition-colors text-[#6b7280] hover:text-[#e8e8e8]">
             <X className="w-5 h-5" />
@@ -164,7 +164,7 @@ function OrderDetailModal({ order, onClose }) {
                 <p className="text-sm font-bold line-clamp-1" style={{ color: '#e8e8e8', fontFamily: 'Rajdhani, sans-serif' }}>{item.productName}</p>
                 <p className="text-xs text-[#6b7280]">Size: {item.size} · Qty: {item.quantity}</p>
               </div>
-              <span className="text-sm font-bold" style={{ color: '#39ff14' }}>{formatPrice(item.subtotal)}</span>
+              <span className="text-sm font-bold" style={{ color: '#FF3500' }}>{formatPrice(item.subtotal)}</span>
             </div>
           ))}
         </div>
@@ -188,7 +188,7 @@ function OrderDetailModal({ order, onClose }) {
 
         <div className="flex justify-between items-center pt-4 border-t border-white/10">
           <span className="text-sm text-[#9ca3af]">Subtotal: {formatPrice(order.subtotal)} · Ship: {formatPrice(order.shippingFee)} · Tax: {formatPrice(order.tax)}</span>
-          <span className="text-2xl font-black" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(order.total)}</span>
+          <span className="text-2xl font-black" style={{ color: '#FF3500', fontFamily: 'Rajdhani, sans-serif' }}>{formatPrice(order.total)}</span>
         </div>
       </div>
     </div>

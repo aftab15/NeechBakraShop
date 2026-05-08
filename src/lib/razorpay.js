@@ -49,7 +49,7 @@ export function openRazorpayCheckout({
       contact: prefillContact,
     },
     theme: {
-      color: '#39ff14',
+      color: '#FF3500',
       backdrop_color: '#0a0a0a',
     },
     modal: {

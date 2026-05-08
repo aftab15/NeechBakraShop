@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
-import { Zap, ArrowRight, Star, Flame, Clock, Truck, RotateCcw, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Flame, Clock, Truck, RotateCcw, ShieldCheck, Users, MoveRight } from 'lucide-react'
 import ProductGrid from '../components/product/ProductGrid'
 import { useState, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
@@ -34,10 +34,10 @@ function useCountdown(targetDate) {
 const DROP_DATE = Date.now() + 3 * 24 * 3600 * 1000 + 5 * 3600 * 1000
 
 const TRUST_ITEMS = [
-  { icon: Truck,       label: 'Free Shipping', sub: 'On orders above ₹999' },
-  { icon: RotateCcw,  label: '7-Day Returns',  sub: 'No questions asked'  },
-  { icon: ShieldCheck, label: 'Secure Checkout', sub: 'Razorpay encrypted'  },
-  { icon: Users,       label: '10K+ Fans',      sub: 'Join the community'  },
+  { icon: Truck,        label: 'Free Shipping',    sub: 'Orders above ₹999' },
+  { icon: RotateCcw,   label: '7-Day Returns',    sub: 'No questions asked'  },
+  { icon: ShieldCheck,  label: 'Secure Checkout',  sub: 'Razorpay encrypted'  },
+  { icon: Users,        label: '10K+ Community',   sub: 'Join the squad'      },
 ]
 
 export default function Home() {
@@ -48,35 +48,27 @@ export default function Home() {
   const [subLoading, setSubLoading] = useState(false)
   const subscribe = useMutation(api.newsletter.subscribe)
 
-  // Hero animation refs
-  const badgeRef     = useRef(null)
-  const titleRef     = useRef(null)
-  const taglineRef   = useRef(null)
-  const descRef      = useRef(null)
-  const buttonsRef   = useRef(null)
-  const statsRef     = useRef(null)
-
-  // Section refs
-  const trustRef     = useRef(null)
-  const featHeaderRef = useRef(null)
-  const brandRef     = useRef(null)
-  const countdownRef = useRef(null)
-  const newsletterRef = useRef(null)
+  const badgeRef   = useRef(null)
+  const titleRef   = useRef(null)
+  const subRef     = useRef(null)
+  const descRef    = useRef(null)
+  const btnsRef    = useRef(null)
+  const statsRef   = useRef(null)
+  const trustRef   = useRef(null)
+  const featRef    = useRef(null)
+  const brandRef   = useRef(null)
+  const dropRef    = useRef(null)
+  const nlRef      = useRef(null)
 
   useEffect(() => {
-    heroEntrance(
-      [badgeRef.current, titleRef.current, taglineRef.current, descRef.current, buttonsRef.current],
-      { delay: 0.15 }
-    )
-    if (statsRef.current) fadeUp(statsRef.current, { delay: 0.8, y: 20 })
+    heroEntrance([badgeRef.current, titleRef.current, subRef.current, descRef.current, btnsRef.current], { delay: 0.1 })
+    if (statsRef.current) fadeUp(statsRef.current, { delay: 0.85, y: 15 })
   }, [])
 
   useEffect(() => {
-    if (trustRef.current)      scrollReveal(trustRef.current,     { y: 30 })
-    if (featHeaderRef.current) scrollReveal(featHeaderRef.current, { y: 30 })
-    if (brandRef.current)      scrollReveal(brandRef.current,     { y: 40 })
-    if (countdownRef.current)  scrollReveal(countdownRef.current, { y: 40 })
-    if (newsletterRef.current) scrollReveal(newsletterRef.current,{ y: 30 })
+    [trustRef, featRef, brandRef, dropRef, nlRef].forEach(r => {
+      if (r.current) scrollReveal(r.current, { y: 40 })
+    })
   }, [])
 
   const handleSubscribe = async (e) => {
@@ -84,35 +76,61 @@ export default function Home() {
     setSubLoading(true)
     try {
       await subscribe({ email: email.trim().toLowerCase() })
-      toast.success('Welcome to the squad! 🎮')
+      toast.success('You\'re in.')
       setEmail('')
     } catch { toast.error('Try again.') }
     setSubLoading(false)
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col" style={{ background: '#080808' }}>
 
       {/* ── HERO ── */}
       <section
-        className="relative min-h-screen flex items-center justify-center overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0a0a0a 0%, #0d0d1a 40%, #0a0a0a 100%)' }}
+        className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
+        style={{ background: '#080808' }}
       >
-        {/* Background grid */}
-        <div className="absolute inset-0 opacity-[0.07]" style={{
-          backgroundImage: 'linear-gradient(rgba(57,255,20,0.4) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.4) 1px, transparent 1px)',
-          backgroundSize: '60px 60px',
-        }} />
-        {/* Glow orbs */}
-        <div className="absolute top-1/4 left-1/4 w-[500px] h-[500px] rounded-full opacity-[0.08] blur-3xl pointer-events-none" style={{ background: '#39ff14' }} />
-        <div className="absolute bottom-1/4 right-1/4 w-[400px] h-[400px] rounded-full opacity-[0.08] blur-3xl pointer-events-none" style={{ background: '#8b5cf6' }} />
+        {/* Subtle grain */}
+        <div className="absolute inset-0 noise-overlay pointer-events-none" />
 
-        <div className="relative z-10 container text-center">
-          {/* Badge */}
+        {/* Faint vertical lines */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 120px)',
+        }} />
+
+        {/* Big background letter */}
+        <div
+          className="absolute select-none pointer-events-none"
+          style={{
+            fontSize: 'clamp(200px, 40vw, 600px)',
+            fontFamily: 'Orbitron, monospace',
+            fontWeight: 900,
+            color: 'rgba(255,255,255,0.025)',
+            letterSpacing: '-0.06em',
+            lineHeight: 1,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -52%)',
+            userSelect: 'none',
+          }}
+        >
+          NB
+        </div>
+
+        <div className="relative z-10 container text-center flex flex-col items-center">
+          {/* Label */}
           <div ref={badgeRef} style={{ opacity: 0 }}>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-8 glass" style={{ border: '1px solid rgba(57,255,20,0.3)' }}>
-              <Flame className="w-4 h-4" style={{ color: '#39ff14' }} />
-              <span className="text-xs font-bold uppercase tracking-widest" style={{ color: '#39ff14', fontFamily: 'Space Grotesk, sans-serif' }}>
+            <div
+              className="inline-flex items-center gap-2 mb-8"
+              style={{
+                padding: '6px 14px',
+                border: '1px solid rgba(255,53,0,0.4)',
+                borderRadius: '2px',
+                background: 'rgba(255,53,0,0.08)',
+              }}
+            >
+              <Flame className="w-3 h-3" style={{ color: '#FF3500' }} />
+              <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', color: '#FF3500', fontFamily: 'Space Grotesk, sans-serif', textTransform: 'uppercase' }}>
                 Official Merch Store
               </span>
             </div>
@@ -121,78 +139,89 @@ export default function Home() {
           {/* Wordmark */}
           <h1
             ref={titleRef}
-            className="text-7xl md:text-9xl lg:text-[160px] font-black uppercase tracking-tighter leading-none mb-6"
+            className="uppercase leading-none"
             style={{
               fontFamily: 'Orbitron, monospace',
-              background: 'linear-gradient(135deg, #39ff14 0%, #8b5cf6 50%, #007cf0 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              filter: 'drop-shadow(0 0 40px rgba(57,255,20,0.25))',
+              fontWeight: 900,
+              fontSize: 'clamp(64px, 14vw, 180px)',
+              letterSpacing: '-0.04em',
+              color: '#F0EBE3',
               opacity: 0,
+              lineHeight: 0.9,
             }}
           >
-            Neech<br />Bakra
+            Neech<br />
+            <span style={{ color: '#FF3500', WebkitTextStroke: '0px', textShadow: '0 0 60px rgba(255,53,0,0.3)' }}>Bakra</span>
           </h1>
 
+          {/* Tagline */}
           <p
-            ref={taglineRef}
-            className="text-2xl md:text-4xl font-bold uppercase tracking-widest mb-4"
-            style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8', opacity: 0 }}
+            ref={subRef}
+            className="uppercase mt-8"
+            style={{
+              fontFamily: 'Rajdhani, sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(16px, 3vw, 28px)',
+              letterSpacing: '0.25em',
+              color: '#A89E94',
+              opacity: 0,
+            }}
           >
             Wear the Madness. Own the Game.
           </p>
 
           <p
             ref={descRef}
-            className="text-[#6b7280] text-base md:text-lg max-w-lg mx-auto mb-14"
-            style={{ fontFamily: 'Space Grotesk, sans-serif', opacity: 0 }}
+            className="mt-4 max-w-md"
+            style={{ fontSize: '15px', color: '#555', fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1.6, opacity: 0 }}
           >
-            Gaming streetwear for those who live the grind. Limited drops. No restocks.
+            Gaming streetwear for those who live the grind.<br />Limited drops. No restocks.
           </p>
 
-          <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center gap-4" style={{ opacity: 0 }}>
-            <Link to="/shop" className="btn-neon text-base px-8 py-4 gap-3">
-              Shop Now <ArrowRight className="w-5 h-5" />
+          <div ref={btnsRef} className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-10" style={{ opacity: 0 }}>
+            <Link to="/shop" className="btn-neon text-sm px-8 py-3.5 gap-2.5">
+              Shop the Drop <ArrowRight className="w-4 h-4" />
             </Link>
-            <Link to="/about" className="btn-outline-neon text-base px-8 py-4">
+            <Link to="/about" className="btn-outline-neon text-sm px-8 py-3.5">
               Our Story
             </Link>
           </div>
 
           {/* Stats */}
-          <div ref={statsRef} className="flex items-center justify-center gap-14 mt-20" style={{ opacity: 0 }}>
-            {[['10K+', 'Community'], ['50+', 'Products'], ['100%', 'Fire']].map(([num, label]) => (
+          <div ref={statsRef} className="flex items-center justify-center gap-16 mt-24" style={{ opacity: 0 }}>
+            {[['10K+', 'Community'], ['50+', 'Products'], ['2+', 'Years']].map(([num, label]) => (
               <div key={label} className="text-center">
-                <p className="text-2xl font-black" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>{num}</p>
-                <p className="text-xs text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
+                <p
+                  className="font-black leading-none"
+                  style={{ fontFamily: 'Orbitron, monospace', fontSize: '22px', color: '#F0EBE3', letterSpacing: '-0.02em' }}
+                >
+                  {num}
+                </p>
+                <p style={{ fontSize: '10px', color: '#555', letterSpacing: '0.14em', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginTop: '6px' }}>
+                  {label}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40">
-          <span className="text-[10px] text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Scroll</span>
-          <div className="w-5 h-8 rounded-full border border-[#6b7280] flex items-start justify-center pt-1">
-            <div className="w-1 h-2 rounded-full bg-[#39ff14] animate-bounce" />
-          </div>
+        {/* Scroll cue */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ opacity: 0.35 }}>
+          <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>Scroll</span>
+          <div style={{ width: '1px', height: '40px', background: 'linear-gradient(to bottom, #555, transparent)' }} />
         </div>
       </section>
 
       {/* ── TRUST BAR ── */}
-      <div ref={trustRef} style={{ background: '#0d0d0d', borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="container py-5">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-0 md:divide-x md:divide-white/5">
+      <div ref={trustRef} style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)', background: '#0D0D0D' }}>
+        <div className="container py-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x" style={{ '--tw-divide-opacity': 1 }}>
             {TRUST_ITEMS.map(({ icon: Icon, label, sub }) => (
-              <div key={label} className="flex items-center gap-3 px-4 md:px-8 first:pl-0 last:pr-0">
-                <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(57,255,20,0.08)', border: '1px solid rgba(57,255,20,0.15)' }}>
-                  <Icon className="w-4 h-4" style={{ color: '#39ff14' }} />
-                </div>
+              <div key={label} className="flex items-center gap-4 md:px-10 first:pl-0 last:pr-0">
+                <Icon className="w-5 h-5 flex-shrink-0" style={{ color: '#FF3500' }} />
                 <div>
-                  <p className="text-[13px] font-semibold leading-tight" style={{ color: '#e8e8e8', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
-                  <p className="text-[11px] leading-tight" style={{ color: '#6b7280', fontFamily: 'Space Grotesk, sans-serif' }}>{sub}</p>
+                  <p style={{ fontSize: '13px', fontWeight: 600, color: '#F0EBE3', fontFamily: 'Space Grotesk, sans-serif', lineHeight: 1.4 }}>{label}</p>
+                  <p style={{ fontSize: '12px', color: '#555', fontFamily: 'Space Grotesk, sans-serif', marginTop: '2px' }}>{sub}</p>
                 </div>
               </div>
             ))}
@@ -201,139 +230,185 @@ export default function Home() {
       </div>
 
       {/* ── FEATURED DROPS ── */}
-      <section className="section" style={{ background: '#0d0d0d' }}>
+      <section className="section" style={{ background: '#080808' }}>
         <div className="container">
-          <div ref={featHeaderRef} className="flex items-end justify-between mb-12">
+          <div ref={featRef} className="flex items-end justify-between mb-16">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Star className="w-4 h-4" style={{ color: '#39ff14' }} />
-                <span className="text-xs font-semibold uppercase tracking-widest text-[#6b7280]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>New Drops</span>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '10px' }}>
+                New Drops
+              </p>
+              <h2
+                className="uppercase font-black leading-none"
+                style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(32px, 5vw, 56px)', color: '#F0EBE3', letterSpacing: '-0.01em' }}
+              >
                 Featured Merch
               </h2>
             </div>
-            <Link to="/shop" className="btn-outline-neon text-xs py-2 px-5 hidden md:flex items-center gap-2">
-              View All <ArrowRight className="w-4 h-4" />
+            <Link to="/shop" className="hidden md:flex items-center gap-2 text-[12px] font-semibold uppercase tracking-widest transition-colors hover:text-[#FF3500]"
+              style={{ color: '#A89E94', fontFamily: 'Space Grotesk, sans-serif' }}>
+              View All <MoveRight className="w-4 h-4" />
             </Link>
           </div>
           <ProductGrid products={featured} loading={!isPlaceholder && rawFeatured === undefined} cols={4} />
-          <div className="mt-12 flex md:hidden justify-center">
+          <div className="mt-10 flex md:hidden justify-center">
             <Link to="/shop" className="btn-outline-neon">View All Products</Link>
           </div>
         </div>
       </section>
 
       {/* ── BRAND STORY ── */}
-      <section className="section" style={{ background: '#0a0a0a' }}>
+      <section style={{ background: '#0D0D0D', borderTop: '1px solid rgba(255,255,255,0.06)' }} className="section">
         <div className="container">
-          <div ref={brandRef} className="grid md:grid-cols-2 gap-16 items-start">
+          <div ref={brandRef} className="grid md:grid-cols-2 gap-20 items-start">
             <div>
-              <span className="text-xs font-semibold uppercase tracking-widest text-[#6b7280] mb-3 block" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>About the Brand</span>
-              <h2 className="text-4xl md:text-5xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-                Why<br /><span style={{ color: '#39ff14' }}>NeechBakra?</span>
-              </h2>
-              <p className="leading-relaxed mb-5" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
-                NeechBakra started as a gaming alias — and turned into a movement. We're the underdogs who outgrind everyone. The ones they said couldn't make it. We proved them wrong. Now you can wear that energy.
+              <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '16px' }}>
+                About the Brand
               </p>
-              <p className="leading-relaxed mb-8" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
+              <h2
+                className="uppercase font-black leading-none mb-8"
+                style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(36px, 5vw, 60px)', color: '#F0EBE3' }}
+              >
+                Why<br />NeechBakra?
+              </h2>
+              <p style={{ color: '#888', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px', lineHeight: 1.75, marginBottom: '20px' }}>
+                NeechBakra started as a gaming alias — and turned into a movement. We're the underdogs who outgrind everyone. The ones they said couldn't make it.
+              </p>
+              <p style={{ color: '#888', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px', lineHeight: 1.75, marginBottom: '40px' }}>
                 Every drop is limited. Every design tells a story. From the grind to the stream, to the streets — this is for the real ones.
               </p>
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-3 gap-px" style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: '4px', overflow: 'hidden' }}>
                 {[
-                  { icon: '🎮', label: 'Gaming DNA' },
-                  { icon: '🔥', label: 'Bold Design' },
-                  { icon: '💜', label: 'Community First' },
-                ].map(({ icon, label }) => (
-                  <div key={label} className="glass rounded-xl p-5 text-center" style={{ border: '1px solid rgba(255,255,255,0.06)' }}>
-                    <p className="text-2xl mb-2">{icon}</p>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-[#6b7280]" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</p>
+                  { emoji: '🎮', label: 'Gaming DNA' },
+                  { emoji: '🔥', label: 'Bold Design' },
+                  { emoji: '💜', label: 'Community' },
+                ].map(({ emoji, label }) => (
+                  <div key={label} className="flex flex-col items-center justify-center gap-3 py-8" style={{ background: '#111', borderRight: '1px solid rgba(255,255,255,0.07)' }}>
+                    <span style={{ fontSize: '22px' }}>{emoji}</span>
+                    <span style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', color: '#666', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>{label}</span>
                   </div>
                 ))}
               </div>
             </div>
+
             <div className="relative">
-              <div className="w-full max-w-sm mx-auto aspect-square rounded-3xl overflow-hidden noise-overlay" style={{ background: 'linear-gradient(135deg, #1a0533 0%, #0a1a2e 50%, #001a0d 100%)' }}>
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="text-[160px] font-black opacity-10 select-none" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>
-                    NB
-                  </span>
-                </div>
+              <div
+                className="w-full mx-auto noise-overlay"
+                style={{
+                  aspectRatio: '4/5',
+                  background: 'linear-gradient(160deg, #111 0%, #1a0a00 60%, #2a0800 100%)',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <span
+                  className="select-none"
+                  style={{ fontFamily: 'Orbitron, monospace', fontWeight: 900, fontSize: '120px', color: 'rgba(255,255,255,0.04)', lineHeight: 1, letterSpacing: '-0.04em' }}
+                >
+                  NB
+                </span>
+                {/* Accent line */}
+                <div className="absolute bottom-0 left-0 right-0 h-[3px]" style={{ background: '#FF3500' }} />
               </div>
-              {/* Floating badge */}
-              <div className="absolute bottom-4 left-4 glass rounded-2xl px-5 py-3" style={{ border: '1px solid rgba(57,255,20,0.3)' }}>
-                <p className="text-3xl font-black" style={{ fontFamily: 'Orbitron, monospace', color: '#39ff14' }}>10K+</p>
-                <p className="text-xs text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Fans Strong</p>
+              <div
+                className="absolute -bottom-3 -left-3 px-5 py-4"
+                style={{ background: '#FF3500', borderRadius: '3px' }}
+              >
+                <p style={{ fontFamily: 'Orbitron, monospace', fontWeight: 900, fontSize: '22px', color: '#000', lineHeight: 1 }}>10K+</p>
+                <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.12em', color: 'rgba(0,0,0,0.6)', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>Fans</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── LIMITED EDITION COUNTDOWN ── */}
-      <section className="section" style={{ background: 'linear-gradient(135deg, #0d0a1a 0%, #0a0a0a 100%)' }}>
-        <div className="container text-center">
-          <div ref={countdownRef} className="glass-strong rounded-3xl p-8 md:p-12 max-w-3xl mx-auto" style={{ border: '1px solid rgba(139,92,246,0.3)' }}>
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <Clock className="w-5 h-5" style={{ color: '#8b5cf6' }} />
-              <span className="text-xs font-semibold uppercase tracking-widest" style={{ color: '#8b5cf6', fontFamily: 'Space Grotesk, sans-serif' }}>Limited Drop Incoming</span>
+      {/* ── DROP COUNTDOWN ── */}
+      <section className="section" style={{ background: '#080808' }}>
+        <div className="container">
+          <div ref={dropRef} style={{ border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
+            {/* Header */}
+            <div className="flex items-center gap-3 px-10 py-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)', background: '#FF3500' }}>
+              <Clock className="w-4 h-4" style={{ color: '#000' }} />
+              <span style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.18em', color: '#000', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>Limited Drop Incoming</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black uppercase mb-3" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-              Season 2 Drop
-            </h2>
-            <p style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif' }} className="mb-10">The most hyped collection yet. Don't sleep on this.</p>
-            {/* Countdown */}
-            <div className="flex items-center justify-center gap-4 md:gap-8 mb-8">
-              {[
-                [countdown.d ?? 0, 'Days'],
-                [countdown.h ?? 0, 'Hours'],
-                [countdown.m ?? 0, 'Mins'],
-                [countdown.s ?? 0, 'Secs'],
-              ].map(([val, label]) => (
-                <div key={label} className="flex flex-col items-center">
-                  <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl flex items-center justify-center mb-2"
-                    style={{ background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.3)' }}>
-                    <span className="text-2xl md:text-3xl font-black" style={{ fontFamily: 'Orbitron, monospace', color: '#8b5cf6' }}>
-                      {String(val).padStart(2, '0')}
-                    </span>
+            <div className="px-10 py-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-12" style={{ background: '#0D0D0D' }}>
+              <div>
+                <h2 className="uppercase font-black leading-none mb-3" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(36px, 6vw, 72px)', color: '#F0EBE3' }}>
+                  Season 2 Drop
+                </h2>
+                <p style={{ color: '#555', fontFamily: 'Space Grotesk, sans-serif', fontSize: '14px' }}>
+                  The most hyped collection yet. Don't sleep on this.
+                </p>
+              </div>
+              <div className="flex items-center gap-3 md:gap-6 flex-shrink-0">
+                {[
+                  [countdown.d ?? 0, 'Days'],
+                  [countdown.h ?? 0, 'Hrs'],
+                  [countdown.m ?? 0, 'Min'],
+                  [countdown.s ?? 0, 'Sec'],
+                ].map(([val, label], i) => (
+                  <div key={label} className="flex items-center gap-3 md:gap-6">
+                    <div className="flex flex-col items-center">
+                      <span
+                        className="font-black"
+                        style={{ fontFamily: 'Orbitron, monospace', fontSize: 'clamp(28px, 4vw, 48px)', color: '#F0EBE3', letterSpacing: '-0.04em', lineHeight: 1 }}
+                      >
+                        {String(val).padStart(2, '0')}
+                      </span>
+                      <span style={{ fontSize: '9px', color: '#555', letterSpacing: '0.16em', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginTop: '4px' }}>{label}</span>
+                    </div>
+                    {i < 3 && <span style={{ color: '#333', fontSize: '24px', fontWeight: 100, lineHeight: 1 }}>:</span>}
                   </div>
-                  <span className="text-[10px] text-[#6b7280] uppercase tracking-widest" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>{label}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-            <Link to="/shop" className="btn-neon text-base px-8 py-3 inline-flex" style={{ background: '#8b5cf6', color: '#fff' }}>
-              Notify Me <ArrowRight className="w-5 h-5" />
-            </Link>
+            <div className="px-10 py-6 flex items-center justify-between" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: '#0A0A0A' }}>
+              <p style={{ fontSize: '12px', color: '#444', fontFamily: 'Space Grotesk, sans-serif' }}>Don't miss it — no restocks after this.</p>
+              <Link to="/shop" className="btn-neon text-xs py-2.5 px-5 gap-2">
+                Notify Me <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
       {/* ── NEWSLETTER ── */}
-      <section className="section" style={{ background: '#0d0d0d' }}>
-        <div className="container max-w-2xl mx-auto text-center">
-          <div ref={newsletterRef}>
-            <Zap className="w-10 h-10 block mx-auto mb-6" style={{ color: '#39ff14' }} />
-            <h2 className="text-4xl md:text-5xl font-black uppercase mb-4" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-              Join the<br /><span style={{ color: '#39ff14' }}>Inner Circle</span>
-            </h2>
-            <p className="mb-10" style={{ color: '#9ca3af', fontFamily: 'Space Grotesk, sans-serif', fontSize: '15px' }}>
-              First access to drops, exclusive offers, and zero spam. Just pure NeechBakra energy.
+      <section style={{ background: '#0D0D0D', borderTop: '1px solid rgba(255,255,255,0.06)' }} className="section">
+        <div className="container max-w-3xl mx-auto text-center">
+          <div ref={nlRef}>
+            <p style={{ fontSize: '10px', fontWeight: 600, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', marginBottom: '16px' }}>
+              Inner Circle
             </p>
-            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <h2 className="uppercase font-black leading-none mb-5" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(32px, 5vw, 52px)', color: '#F0EBE3' }}>
+              First access.<br />Every drop.
+            </h2>
+            <p className="mb-10" style={{ color: '#666', fontFamily: 'Space Grotesk, sans-serif', fontSize: '14px', lineHeight: 1.7 }}>
+              Zero spam. Just early access to every collection and exclusive community offers.
+            </p>
+            <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2 max-w-md mx-auto">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
+                placeholder="your@email.com"
                 required
-                className="flex-1 px-5 py-3.5 rounded-lg text-[#e8e8e8] placeholder-[#6b7280] focus:outline-none transition-colors"
                 style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  flex: 1,
+                  padding: '13px 16px',
+                  background: '#111',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '3px',
+                  color: '#F0EBE3',
+                  fontSize: '14px',
                   fontFamily: 'Space Grotesk, sans-serif',
+                  outline: 'none',
+                  transition: 'border-color 0.2s',
                 }}
-                onFocus={(e) => e.target.style.borderColor = '#39ff14'}
-                onBlur={(e) => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                onFocus={e => e.target.style.borderColor = '#FF3500'}
+                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.08)'}
               />
               <button type="submit" disabled={subLoading} className="btn-neon whitespace-nowrap">
                 {subLoading ? 'Joining...' : 'Join Now'}

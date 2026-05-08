@@ -28,16 +28,16 @@ export function staggerFadeUp(els, opts = {}) {
 }
 
 export function scrollReveal(el, opts = {}) {
-  if (reduced) return
+  if (reduced || !el) return
   return gsap.fromTo(el,
-    { y: opts.y ?? 60, opacity: 0 },
+    { y: opts.y ?? 30 },
     {
-      y: 0, opacity: 1,
-      duration: opts.duration ?? 0.8,
+      y: 0,
+      duration: opts.duration ?? 0.7,
       ease: 'power3.out',
       scrollTrigger: {
         trigger: el,
-        start: opts.start ?? 'top 85%',
+        start: opts.start ?? 'top 90%',
         once: true,
         ...opts.scrollTrigger,
       },
@@ -48,15 +48,15 @@ export function scrollReveal(el, opts = {}) {
 export function scrollRevealStagger(els, opts = {}) {
   if (reduced) return
   return gsap.fromTo(els,
-    { y: opts.y ?? 50, opacity: 0 },
+    { y: opts.y ?? 30 },
     {
-      y: 0, opacity: 1,
-      duration: opts.duration ?? 0.65,
+      y: 0,
+      duration: opts.duration ?? 0.6,
       ease: 'power3.out',
-      stagger: opts.stagger ?? 0.12,
+      stagger: opts.stagger ?? 0.1,
       scrollTrigger: {
         trigger: els[0] ?? els,
-        start: opts.start ?? 'top 85%',
+        start: opts.start ?? 'top 90%',
         once: true,
       },
     }

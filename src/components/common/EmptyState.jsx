@@ -21,14 +21,14 @@ export default function EmptyState({
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
       <div
-        className="w-24 h-24 rounded-full flex items-center justify-center mb-6"
-        style={{ background: 'rgba(57,255,20,0.06)', border: '1px solid rgba(57,255,20,0.15)' }}
+        className="w-20 h-20 flex items-center justify-center mb-6"
+        style={{ background: 'rgba(255,53,0,0.06)', border: '1px solid rgba(255,53,0,0.2)', borderRadius: '4px' }}
       >
-        <Icon className="w-10 h-10" style={{ color: '#39ff14' }} />
+        <Icon className="w-9 h-9" style={{ color: '#FF3500' }} />
       </div>
       <h3
         className="text-2xl font-bold mb-3 uppercase tracking-wide"
-        style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}
+        style={{ fontFamily: 'Rajdhani, sans-serif', color: '#F0EBE3' }}
       >
         {title || 'Nothing here yet'}
       </h3>

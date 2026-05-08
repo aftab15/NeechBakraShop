@@ -12,11 +12,11 @@ export default function AdminDashboard() {
   if (stats === undefined) return <PageLoader />
 
   const cards = [
-    { icon: IndianRupee, color: '#39ff14', label: 'Total Revenue', value: formatPrice(stats.totalRevenue) },
+    { icon: IndianRupee, color: '#FF3500', label: 'Total Revenue', value: formatPrice(stats.totalRevenue) },
     { icon: ShoppingBag, color: '#8b5cf6', label: 'Total Orders', value: stats.totalOrders },
     { icon: Clock, color: '#f59e0b', label: 'Pending Orders', value: stats.pendingOrders },
     { icon: TrendingUp, color: '#007cf0', label: 'Confirmed', value: stats.confirmedOrders },
-    { icon: Package, color: '#39ff14', label: 'Active Products', value: `${stats.activeProducts}/${stats.totalProducts}` },
+    { icon: Package, color: '#FF3500', label: 'Active Products', value: `${stats.activeProducts}/${stats.totalProducts}` },
     { icon: Users, color: '#8b5cf6', label: 'Subscribers', value: stats.totalSubscribers },
     { icon: Mail, color: '#ef4444', label: 'Unread Messages', value: stats.unreadMessages },
   ]
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
       <div className="container">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#39ff14] mb-2">Admin</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#FF3500] mb-2">Admin</p>
             <h1 className="text-4xl md:text-5xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
               Dashboard
             </h1>
@@ -55,7 +55,7 @@ export default function AdminDashboard() {
               <h2 className="text-xl font-black uppercase" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
                 Recent Orders
               </h2>
-              <Link to="/admin/orders" className="text-xs font-bold uppercase tracking-widest text-[#39ff14] hover:underline" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
+              <Link to="/admin/orders" className="text-xs font-bold uppercase tracking-widest text-[#FF3500] hover:underline" style={{ fontFamily: 'Rajdhani, sans-serif' }}>
                 View All <ArrowRight className="inline w-3 h-3" />
               </Link>
             </div>
@@ -68,14 +68,14 @@ export default function AdminDashboard() {
                 {recentOrders.map((order) => (
                   <div key={order._id} className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-mono text-[#39ff14]">{order._id.slice(-10).toUpperCase()}</p>
+                      <p className="text-xs font-mono text-[#FF3500]">{order._id.slice(-10).toUpperCase()}</p>
                       <p className="text-xs text-[#6b7280] mt-0.5">{formatDate(order.createdAt)}</p>
                     </div>
                     <div className="flex items-center gap-4 flex-shrink-0">
                       <span className={`text-xs font-bold uppercase ${getStatusColor(order.status)}`} style={{ fontFamily: 'Rajdhani, sans-serif' }}>
                         {order.status}
                       </span>
-                      <span className="text-sm font-black" style={{ color: '#39ff14', fontFamily: 'Rajdhani, sans-serif' }}>
+                      <span className="text-sm font-black" style={{ color: '#FF3500', fontFamily: 'Rajdhani, sans-serif' }}>
                         {formatPrice(order.total)}
                       </span>
                     </div>
@@ -92,7 +92,7 @@ export default function AdminDashboard() {
             <div className="flex flex-col gap-3">
               <Link to="/admin/products" className="flex items-center justify-between p-3 rounded-lg transition-all hover:bg-white/5" style={{ border: '1px solid rgba(255,255,255,0.08)' }}>
                 <span className="flex items-center gap-3">
-                  <Package className="w-4 h-4" style={{ color: '#39ff14' }} />
+                  <Package className="w-4 h-4" style={{ color: '#FF3500' }} />
                   <span className="text-sm font-medium text-[#e8e8e8]" style={{ fontFamily: 'Rajdhani, sans-serif' }}>Manage Products</span>
                 </span>
                 <ArrowRight className="w-4 h-4 text-[#6b7280]" />

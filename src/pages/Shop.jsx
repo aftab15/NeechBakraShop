@@ -20,7 +20,6 @@ export default function Shop() {
   const dispatch = useDispatch()
   const filters = useSelector(selectFilters)
 
-  // Read category from URL query param
   useEffect(() => {
     const cat = searchParams.get('category')
     if (cat) {
@@ -36,10 +35,8 @@ export default function Shop() {
     inStockOnly: filters.inStockOnly || undefined,
   })
 
-  // In placeholder mode use mock data; otherwise use real Convex data
   const products = isPlaceholder ? MOCK_PRODUCTS : rawProducts
 
-  // Client-side filter + sort (needed for mock data which isn't server-filtered)
   const sorted = useMemo(() => {
     if (!products) return []
     let arr = [...products]
@@ -54,29 +51,39 @@ export default function Shop() {
   }, [products, filters])
 
   return (
-    <div className="min-h-screen py-12 md:py-16">
-      <div className="container">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div>
-            <h1 className="text-4xl md:text-6xl font-black uppercase tracking-wide" style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}>
-              {filters.category || 'All Products'}
-            </h1>
-            <p className="mt-2" style={{ color: '#6b7280', fontSize: '13px', fontFamily: 'Space Grotesk, sans-serif' }}>
-              {sorted.length > 0 ? `${sorted.length} products` : ''}
-            </p>
-          </div>
-          {/* Mobile filter toggle */}
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="lg:hidden flex items-center gap-2 px-4 py-2 rounded-lg glass text-sm font-semibold"
-            style={{ border: '1px solid rgba(255,255,255,0.1)', color: '#e8e8e8', fontFamily: 'Rajdhani, sans-serif' }}
-          >
-            {showFilters ? <X className="w-4 h-4" /> : <SlidersHorizontal className="w-4 h-4" />}
-            Filters
-          </button>
-        </div>
+    <div className="min-h-screen" style={{ background: '#080808' }}>
 
+      {/* Page header */}
+      <div style={{ background: '#0D0D0D', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+        <div className="container py-20 md:py-28">
+          <div className="flex items-end justify-between">
+            <div>
+              <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.2em', color: '#FF3500', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif', display: 'block', marginBottom: '10px' }}>
+                The Collection
+              </span>
+              <h1 className="uppercase font-black leading-none" style={{ fontFamily: 'Rajdhani, sans-serif', fontSize: 'clamp(36px, 6vw, 72px)', color: '#F0EBE3' }}>
+                {filters.category || 'All Products'}
+              </h1>
+              {sorted.length > 0 && (
+                <p className="mt-3" style={{ color: '#555', fontSize: '13px', fontFamily: 'Space Grotesk, sans-serif' }}>
+                  {sorted.length} {sorted.length === 1 ? 'product' : 'products'}
+                </p>
+              )}
+            </div>
+            {/* Mobile filter toggle */}
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="lg:hidden flex items-center gap-2 px-4 py-2 transition-colors"
+              style={{ border: '1px solid rgba(255,255,255,0.12)', borderRadius: '3px', color: '#F0EBE3', fontFamily: 'Space Grotesk, sans-serif', fontSize: '12px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', background: '#111' }}
+            >
+              {showFilters ? <X className="w-3.5 h-3.5" /> : <SlidersHorizontal className="w-3.5 h-3.5" />}
+              Filters
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="container py-14 md:py-16">
         <div className="flex gap-10">
           {/* Sidebar Filters — desktop */}
           <ProductFilters className="hidden lg:flex w-56 flex-shrink-0" />
@@ -84,8 +91,8 @@ export default function Shop() {
           {/* Mobile filters drawer */}
           {showFilters && (
             <div className="lg:hidden fixed inset-0 z-50 flex">
-              <div className="absolute inset-0 bg-black/60" onClick={() => setShowFilters(false)} />
-              <div className="relative z-10 w-72 h-full overflow-y-auto glass-strong p-6 border-r border-white/10">
+              <div className="absolute inset-0 bg-black/70" onClick={() => setShowFilters(false)} />
+              <div className="relative z-10 w-72 h-full overflow-y-auto p-6" style={{ background: '#111', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
                 <ProductFilters />
               </div>
             </div>
