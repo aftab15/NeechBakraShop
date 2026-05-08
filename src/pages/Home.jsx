@@ -7,7 +7,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
 import toast from 'react-hot-toast'
 import { MOCK_FEATURED } from '../lib/mockProducts'
-import { heroEntrance, scrollReveal, scrollRevealStagger, fadeUp } from '../lib/animations'
+import { heroEntrance, scrollReveal, fadeUp } from '../lib/animations'
 
 const isPlaceholder = import.meta.env.VITE_CONVEX_URL?.includes('placeholder')
 

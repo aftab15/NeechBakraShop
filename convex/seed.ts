@@ -1,9 +1,15 @@
 import { mutation } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
-// Seed sample NeechBakra products — run once from Convex dashboard
+// Seed sample NeechBakra products — admin only
 export const seedProducts = mutation({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Admin only");
+
     // Create categories first
     const cats = [
       { name: "Hoodies", slug: "hoodies", sortOrder: 1 },

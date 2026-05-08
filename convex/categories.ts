@@ -1,5 +1,13 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
+
+async function requireAdmin(ctx: any) {
+  const userId = await getAuthUserId(ctx);
+  if (!userId) throw new Error("Not authenticated");
+  const user = await ctx.db.get(userId);
+  if (user?.role !== "admin") throw new Error("Admin only");
+}
 
 // List all active categories
 export const listCategories = query({
@@ -16,6 +24,7 @@ export const listCategories = query({
 export const listAllCategories = query({
   args: {},
   handler: async (ctx) => {
+    await requireAdmin(ctx);
     return await ctx.db.query("categories").collect();
   },
 });
@@ -30,6 +39,7 @@ export const createCategory = mutation({
     sortOrder: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx);
     return await ctx.db.insert("categories", {
       name: args.name,
       slug: args.slug,

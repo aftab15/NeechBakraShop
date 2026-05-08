@@ -1,5 +1,6 @@
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+import { getAuthUserId } from "@convex-dev/auth/server";
 
 // Subscribe to newsletter
 export const subscribe = mutation({
@@ -31,6 +32,10 @@ export const subscribe = mutation({
 export const listSubscribers = query({
   args: {},
   handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) throw new Error("Not authenticated");
+    const user = await ctx.db.get(userId);
+    if (user?.role !== "admin") throw new Error("Admin only");
     return await ctx.db
       .query("newsletterSubscribers")
       .withIndex("by_active", (q) => q.eq("isActive", true))

@@ -14,6 +14,30 @@ export default function OrderSuccess() {
 
   if (orderId && order === undefined) return <PageLoader />
 
+  // No orderId in URL, or query returned null (not found / not yours).
+  if (!orderId || order === null) {
+    return (
+      <div className="min-h-screen py-12">
+        <div className="container max-w-2xl mx-auto">
+          <div className="glass-strong rounded-3xl p-8 md:p-12 text-center" style={{ border: '1px solid rgba(255,255,255,0.1)' }}>
+            <h1
+              className="text-3xl md:text-4xl font-black uppercase mb-3"
+              style={{ fontFamily: 'Rajdhani, sans-serif', color: '#e8e8e8' }}
+            >
+              Order Not Found
+            </h1>
+            <p className="text-[#9ca3af] mb-6">
+              We couldn't find that order, or you don't have access to it.
+            </p>
+            <Link to="/orders" className="btn-neon">
+              <Package className="w-4 h-4" /> View My Orders
+            </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen py-12">
       <div className="container max-w-2xl mx-auto">

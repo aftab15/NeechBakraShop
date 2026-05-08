@@ -29,7 +29,7 @@ export default function AdminProducts() {
     try {
       await deleteProduct({ id })
       toast.success('Product deleted')
-    } catch (err) {
+    } catch {
       toast.error('Failed to delete')
     }
   }
@@ -38,7 +38,7 @@ export default function AdminProducts() {
     try {
       await toggleActive({ id, isActive: !current })
       toast.success(`Product ${!current ? 'activated' : 'deactivated'}`)
-    } catch (err) {
+    } catch {
       toast.error('Failed')
     }
   }

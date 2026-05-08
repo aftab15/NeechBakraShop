@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { Zap, Target, Users, Sparkles, ArrowRight } from 'lucide-react'
-import { scrollReveal, scrollRevealStagger } from '../lib/animations'
+import { scrollReveal } from '../lib/animations'
 
 export default function About() {
   const heroRef   = useRef(null)

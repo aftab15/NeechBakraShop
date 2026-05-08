@@ -26,7 +26,7 @@ export default function Profile() {
       })
       toast.success('Profile updated!')
       setEditing(false)
-    } catch (err) {
+    } catch {
       toast.error('Failed to update profile')
     }
   }

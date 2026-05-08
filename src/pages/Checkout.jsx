@@ -5,7 +5,6 @@ import { useQuery, useMutation } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { useForm } from 'react-hook-form'
 import { selectCartItems, selectCartTotal, clearCart } from '../features/cart/cartSlice'
-import { calculateOrderTotals } from '../lib/utils'
 import CheckoutSummary from '../components/checkout/CheckoutSummary'
 import RazorpayButton from '../components/checkout/RazorpayButton'
 import EmptyState from '../components/common/EmptyState'
@@ -47,22 +46,12 @@ export default function Checkout() {
   const onSubmitAddress = async (data) => {
     setCreatingOrder(true)
     try {
-      const { shippingFee, tax, total } = calculateOrderTotals(subtotal)
       const id = await createOrder({
         items: items.map((it) => ({
           productId: it.productId,
-          productName: it.name,
-          productSlug: it.slug,
-          image: it.image || '',
           size: it.size,
           quantity: it.quantity,
-          price: it.price,
-          subtotal: it.price * it.quantity,
         })),
-        subtotal,
-        shippingFee,
-        tax,
-        total,
         shippingAddress: {
           fullName: data.fullName,
           phone: data.phone,
