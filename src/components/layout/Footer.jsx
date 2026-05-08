@@ -53,9 +53,9 @@ export default function Footer() {
   }
 
   return (
-    <footer style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.07)' }} className="mt-auto">
-      <div className="container pt-28 pb-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 pb-20" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
+    <footer style={{ background: '#0A0A0A', borderTop: '1px solid rgba(255,255,255,0.07)', marginTop: 'auto' }} className="mt-16 md:mt-24">
+      <div className="container pt-24 md:pt-32 pb-20 md:pb-28">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-14 pb-16 md:pb-20" style={{ borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
 
           {/* Brand */}
           <div className="lg:col-span-1">
@@ -145,7 +145,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom */}
-        <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-3">
+        <div className="pt-12 md:pt-14 flex flex-col md:flex-row items-center justify-between gap-3">
           <p style={{ fontSize: '12px', color: '#444', fontFamily: 'Space Grotesk, sans-serif' }}>
             © {new Date().getFullYear()} NeechBakra. All rights reserved.
           </p>

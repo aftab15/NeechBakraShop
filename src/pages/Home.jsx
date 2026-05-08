@@ -3,6 +3,7 @@ import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { ArrowRight, Flame, Clock, Truck, RotateCcw, ShieldCheck, Users, MoveRight } from 'lucide-react'
 import ProductGrid from '../components/product/ProductGrid'
+import { ContainerScroll } from '../components/ui/container-scroll-animation'
 import { useState, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
 import toast from 'react-hot-toast'
@@ -210,6 +211,48 @@ export default function Home() {
           <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>Scroll</span>
           <div style={{ width: '1px', height: '40px', background: 'linear-gradient(to bottom, #555, transparent)' }} />
         </div>
+      </section>
+
+      {/* ── SCROLL REVEAL HERO ── */}
+      <section style={{ background: '#080808' }}>
+        <ContainerScroll
+          titleComponent={
+            <div className="pb-6">
+              <p
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  letterSpacing: '0.22em',
+                  color: '#FF3500',
+                  textTransform: 'uppercase',
+                  fontFamily: 'Space Grotesk, sans-serif',
+                  marginBottom: '14px',
+                }}
+              >
+                Featured Drop
+              </p>
+              <h2
+                className="uppercase font-black leading-[0.95]"
+                style={{
+                  fontFamily: 'Rajdhani, sans-serif',
+                  fontSize: 'clamp(36px, 6vw, 84px)',
+                  color: '#F0EBE3',
+                }}
+              >
+                Wear the Madness.{' '}
+                <span style={{ color: '#FF3500' }}>Own the Game.</span>
+              </h2>
+            </div>
+          }
+        >
+          <img
+            src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=1400&q=80"
+            alt="Featured drop"
+            className="mx-auto rounded-2xl object-cover h-full w-full object-center"
+            draggable={false}
+            loading="lazy"
+          />
+        </ContainerScroll>
       </section>
 
       {/* ── TRUST BAR ── */}
