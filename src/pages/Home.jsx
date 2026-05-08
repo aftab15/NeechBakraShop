@@ -3,12 +3,11 @@ import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
 import { ArrowRight, Flame, Clock, Truck, RotateCcw, ShieldCheck, Users, MoveRight } from 'lucide-react'
 import ProductGrid from '../components/product/ProductGrid'
-import { ContainerScroll } from '../components/ui/container-scroll-animation'
 import { useState, useEffect, useRef } from 'react'
 import { useMutation } from 'convex/react'
 import toast from 'react-hot-toast'
 import { MOCK_FEATURED } from '../lib/mockProducts'
-import { heroEntrance, scrollReveal, fadeUp } from '../lib/animations'
+import { heroEntrance, scrollReveal, fadeUp, scrollTilt } from '../lib/animations'
 
 const isPlaceholder = import.meta.env.VITE_CONVEX_URL?.includes('placeholder')
 
@@ -49,6 +48,8 @@ export default function Home() {
   const [subLoading, setSubLoading] = useState(false)
   const subscribe = useMutation(api.newsletter.subscribe)
 
+  const heroRef    = useRef(null)
+  const backdropRef= useRef(null)
   const badgeRef   = useRef(null)
   const titleRef   = useRef(null)
   const subRef     = useRef(null)
@@ -64,6 +65,9 @@ export default function Home() {
   useEffect(() => {
     heroEntrance([badgeRef.current, titleRef.current, subRef.current, descRef.current, btnsRef.current], { delay: 0.1 })
     if (statsRef.current) fadeUp(statsRef.current, { delay: 0.85, y: 15 })
+    if (backdropRef.current && heroRef.current) {
+      scrollTilt(backdropRef.current, { trigger: heroRef.current, from: 20, to: -10 })
+    }
   }, [])
 
   useEffect(() => {
@@ -88,8 +92,9 @@ export default function Home() {
 
       {/* ── HERO ── */}
       <section
+        ref={heroRef}
         className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
-        style={{ background: '#080808' }}
+        style={{ background: '#080808', perspective: '1200px' }}
       >
         {/* Subtle grain */}
         <div className="absolute inset-0 noise-overlay pointer-events-none" />
@@ -99,23 +104,35 @@ export default function Home() {
           backgroundImage: 'repeating-linear-gradient(90deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 120px)',
         }} />
 
-        {/* Big background letter */}
+        {/* Big backdrop logo (tilts on scroll via scrollTilt) */}
         <div
-          className="absolute select-none pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
-            fontSize: 'clamp(200px, 40vw, 600px)',
-            fontFamily: 'Orbitron, monospace',
-            fontWeight: 900,
-            color: 'rgba(255,255,255,0.025)',
-            letterSpacing: '-0.06em',
-            lineHeight: 1,
             top: '50%',
             left: '50%',
             transform: 'translate(-50%, -52%)',
-            userSelect: 'none',
+            width: 'clamp(280px, 48vw, 720px)',
+            aspectRatio: '1 / 1',
+            transformStyle: 'preserve-3d',
+            willChange: 'transform',
           }}
         >
-          NB
+          <img
+            ref={backdropRef}
+            src="/logo.png"
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+            style={{
+              width: '100%',
+              height: '100%',
+              objectFit: 'contain',
+              opacity: 0.06,
+              filter: 'brightness(0) invert(1)',
+              transformOrigin: 'center center',
+              userSelect: 'none',
+            }}
+          />
         </div>
 
         <div className="relative z-10 container text-center flex flex-col items-center">
@@ -211,48 +228,6 @@ export default function Home() {
           <span style={{ fontSize: '9px', letterSpacing: '0.2em', color: '#555', textTransform: 'uppercase', fontFamily: 'Space Grotesk, sans-serif' }}>Scroll</span>
           <div style={{ width: '1px', height: '40px', background: 'linear-gradient(to bottom, #555, transparent)' }} />
         </div>
-      </section>
-
-      {/* ── SCROLL REVEAL HERO ── */}
-      <section style={{ background: '#080808' }}>
-        <ContainerScroll
-          titleComponent={
-            <div className="pb-6">
-              <p
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  letterSpacing: '0.22em',
-                  color: '#FF3500',
-                  textTransform: 'uppercase',
-                  fontFamily: 'Space Grotesk, sans-serif',
-                  marginBottom: '14px',
-                }}
-              >
-                Featured Drop
-              </p>
-              <h2
-                className="uppercase font-black leading-[0.95]"
-                style={{
-                  fontFamily: 'Rajdhani, sans-serif',
-                  fontSize: 'clamp(36px, 6vw, 84px)',
-                  color: '#F0EBE3',
-                }}
-              >
-                Wear the Madness.{' '}
-                <span style={{ color: '#FF3500' }}>Own the Game.</span>
-              </h2>
-            </div>
-          }
-        >
-          <img
-            src="https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=1400&q=80"
-            alt="Featured drop"
-            className="mx-auto rounded-2xl object-cover h-full w-full object-center"
-            draggable={false}
-            loading="lazy"
-          />
-        </ContainerScroll>
       </section>
 
       {/* ── TRUST BAR ── */}

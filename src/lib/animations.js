@@ -63,6 +63,32 @@ export function scrollRevealStagger(els, opts = {}) {
   )
 }
 
+/**
+ * Scroll-driven 3D tilt. Element rotates from `from` deg (default 20°) to
+ * 0° as the user scrolls through the trigger section. The trigger element
+ * needs `style={{ perspective: '...' }}` for the rotation to look 3D.
+ */
+export function scrollTilt(el, opts = {}) {
+  if (reduced || !el) return
+  const from = opts.from ?? 20
+  const to = opts.to ?? 0
+  const trigger = opts.trigger ?? el
+  return gsap.fromTo(el,
+    { rotateX: from },
+    {
+      rotateX: to,
+      ease: 'none',
+      scrollTrigger: {
+        trigger,
+        start: opts.start ?? 'top top',
+        end: opts.end ?? 'bottom top',
+        scrub: opts.scrub ?? true,
+        ...opts.scrollTrigger,
+      },
+    }
+  )
+}
+
 export function heroEntrance(els, opts = {}) {
   if (reduced) return
   const tl = gsap.timeline({ delay: opts.delay ?? 0.1 })
