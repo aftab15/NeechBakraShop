@@ -23,7 +23,7 @@ export default function Contact() {
       toast.success('Message sent! We\'ll reply within 24-48h.')
       setSubmitted(true)
       reset()
-    } catch (err) {
+    } catch {
       toast.error('Failed to send. Try again.')
     } finally {
       setSubmitting(false)

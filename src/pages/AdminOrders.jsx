@@ -21,7 +21,7 @@ export default function AdminOrders() {
     try {
       await updateStatus({ orderId, status })
       toast.success(`Order marked ${status}`)
-    } catch (err) {
+    } catch {
       toast.error('Failed to update')
     }
   }

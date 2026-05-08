@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const MAX_QTY = 10
+
 const initialState = {
   items: [],      // { id, productId, name, slug, image, size, price, compareAtPrice, quantity, gradientClass }
   isOpen: false,
+  lastAddCapped: false, // true if the last addToCart hit MAX_QTY
 }
 
 const cartSlice = createSlice({
@@ -10,14 +13,18 @@ const cartSlice = createSlice({
   initialState,
   reducers: {
     addToCart(state, action) {
-      const { productId, size, ...rest } = action.payload
+      const { productId, size, quantity = 1, ...rest } = action.payload
+      const qty = Math.max(1, Math.min(Math.floor(Number(quantity) || 1), MAX_QTY))
       const existing = state.items.find(
         (i) => i.productId === productId && i.size === size
       )
       if (existing) {
-        existing.quantity = Math.min(existing.quantity + 1, 10)
+        const next = Math.min(existing.quantity + qty, MAX_QTY)
+        state.lastAddCapped = next < existing.quantity + qty
+        existing.quantity = next
       } else {
-        state.items.push({ productId, size, quantity: 1, ...rest })
+        state.items.push({ productId, size, quantity: qty, ...rest })
+        state.lastAddCapped = false
       }
     },
     removeFromCart(state, action) {
@@ -32,7 +39,7 @@ const cartSlice = createSlice({
         (i) => i.productId === productId && i.size === size
       )
       if (item) {
-        item.quantity = Math.max(1, Math.min(quantity, 10))
+        item.quantity = Math.max(1, Math.min(Math.floor(Number(quantity) || 1), MAX_QTY))
       }
     },
     clearCart(state) {
@@ -56,5 +63,6 @@ export const selectCartCount = (state) =>
 export const selectCartTotal = (state) =>
   state.cart.items.reduce((sum, i) => sum + i.price * i.quantity, 0)
 export const selectCartIsOpen = (state) => state.cart.isOpen
+export const selectLastAddCapped = (state) => state.cart.lastAddCapped
 
 export default cartSlice.reducer

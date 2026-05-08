@@ -31,10 +31,9 @@ export default function RazorpayButton({
         return
       }
 
-      // 2. Create Razorpay order from backend (secret key never leaves server)
+      // 2. Create Razorpay order from backend (amount + secret stay server-side)
       const { razorpayOrderId, amount, currency } = await createRazorpayOrder({
         orderId,
-        amount: total,
         currency: 'INR',
       })
 
@@ -62,7 +61,7 @@ export default function RazorpayButton({
               toast.error('Payment verification failed!')
               onFailure?.()
             }
-          } catch (err) {
+          } catch {
             toast.error('Verification error. Contact support.')
             onFailure?.()
           }

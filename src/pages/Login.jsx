@@ -17,7 +17,7 @@ export default function Login() {
   const [mode, setMode] = useState('signIn')
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { register, handleSubmit, formState: { errors }, watch } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm()
 
   const from = location.state?.from || '/'
 

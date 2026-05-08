@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useQuery } from 'convex/react'
 import { api } from '../../convex/_generated/api'
-import { Package, ChevronRight, Eye } from 'lucide-react'
+import { ChevronRight } from 'lucide-react'
 import { formatPrice, formatDate, getStatusColor, getPaymentStatusColor } from '../lib/utils'
 import { PageLoader } from '../components/common/LoadingSpinner'
 import EmptyState from '../components/common/EmptyState'

@@ -1,26 +1,29 @@
-import { query, mutation } from "./_generated/server";
+import { query, mutation, internalMutation } from "./_generated/server";
 import { v } from "convex/values";
 import { getAuthUserId } from "@convex-dev/auth/server";
 
-// Create a new order (returns order ID)
+const SHIPPING_FREE_THRESHOLD = 99900; // ₹999 in paise
+const SHIPPING_FEE = 9900;             // ₹99 in paise
+const TAX_RATE = 0.18;                 // 18% GST
+
+function computeTotals(subtotal: number) {
+  const shippingFee = subtotal >= SHIPPING_FREE_THRESHOLD ? 0 : SHIPPING_FEE;
+  const tax = Math.round(subtotal * TAX_RATE);
+  const total = subtotal + shippingFee + tax;
+  return { shippingFee, tax, total };
+}
+
+// Create a new order. All money fields are recomputed server-side from the
+// authoritative product price; client-supplied prices are ignored.
 export const createOrder = mutation({
   args: {
     items: v.array(
       v.object({
         productId: v.id("products"),
-        productName: v.string(),
-        productSlug: v.string(),
-        image: v.string(),
         size: v.string(),
         quantity: v.number(),
-        price: v.number(),
-        subtotal: v.number(),
       })
     ),
-    subtotal: v.number(),
-    shippingFee: v.number(),
-    tax: v.number(),
-    total: v.number(),
     shippingAddress: v.object({
       fullName: v.string(),
       phone: v.string(),
@@ -36,14 +39,53 @@ export const createOrder = mutation({
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) throw new Error("Not authenticated");
+    if (args.items.length === 0) throw new Error("Cart is empty");
+
+    // Recompute item lines from DB and decrement stock atomically.
+    const orderItems = [];
+    let subtotal = 0;
+    for (const it of args.items) {
+      if (!Number.isInteger(it.quantity) || it.quantity < 1 || it.quantity > 10) {
+        throw new Error("Invalid item quantity");
+      }
+      const product = await ctx.db.get(it.productId);
+      if (!product || !product.isActive) {
+        throw new Error(`Product unavailable: ${it.productId}`);
+      }
+      if (product.stock < it.quantity) {
+        throw new Error(`Insufficient stock for ${product.name}`);
+      }
+      if (product.sizes[0] !== "ONE SIZE" && !product.sizes.includes(it.size)) {
+        throw new Error(`Invalid size for ${product.name}`);
+      }
+      const lineSubtotal = product.price * it.quantity;
+      subtotal += lineSubtotal;
+      orderItems.push({
+        productId: product._id,
+        productName: product.name,
+        productSlug: product.slug,
+        image: product.images?.[0] ?? "",
+        size: it.size,
+        quantity: it.quantity,
+        price: product.price,
+        subtotal: lineSubtotal,
+      });
+      // Decrement stock. Convex OCC will retry on conflict.
+      await ctx.db.patch(product._id, {
+        stock: product.stock - it.quantity,
+        updatedAt: Date.now(),
+      });
+    }
+
+    const { shippingFee, tax, total } = computeTotals(subtotal);
 
     return await ctx.db.insert("orders", {
       userId,
-      items: args.items,
-      subtotal: args.subtotal,
-      shippingFee: args.shippingFee,
-      tax: args.tax,
-      total: args.total,
+      items: orderItems,
+      subtotal,
+      shippingFee,
+      tax,
+      total,
       status: "pending",
       paymentStatus: "pending",
       shippingAddress: args.shippingAddress,
@@ -54,8 +96,8 @@ export const createOrder = mutation({
   },
 });
 
-// Attach Razorpay order ID to our order
-export const setRazorpayOrderId = mutation({
+// Internal: attach Razorpay order ID. Called only from payments.ts action.
+export const setRazorpayOrderId = internalMutation({
   args: {
     orderId: v.id("orders"),
     razorpayOrderId: v.string(),
@@ -82,18 +124,25 @@ export const getUserOrders = query({
   },
 });
 
-// Get single order by ID
+// Get single order by ID. Owner or admin only.
 export const getOrderById = query({
   args: { orderId: v.id("orders") },
   handler: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
     if (!userId) return null;
     const order = await ctx.db.get(args.orderId);
-    // Users can only see their own orders; admins see all
     if (!order) return null;
     const user = await ctx.db.get(userId);
     if (order.userId !== userId && user?.role !== "admin") return null;
     return order;
+  },
+});
+
+// Internal: load order for payment action (skips auth — caller verifies).
+export const getOrderInternal = query({
+  args: { orderId: v.id("orders") },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.orderId);
   },
 });
 
@@ -146,13 +195,16 @@ export const updateOrderStatus = mutation({
   },
 });
 
-// Mark order as paid (called after payment verification)
-export const markOrderPaid = mutation({
+// Internal: mark paid. Idempotent — no-op if already paid.
+export const markOrderPaid = internalMutation({
   args: {
     orderId: v.id("orders"),
     razorpayPaymentId: v.string(),
   },
   handler: async (ctx, args) => {
+    const order = await ctx.db.get(args.orderId);
+    if (!order) throw new Error("Order not found");
+    if (order.paymentStatus === "paid") return; // idempotent
     await ctx.db.patch(args.orderId, {
       paymentStatus: "paid",
       status: "confirmed",
@@ -162,10 +214,24 @@ export const markOrderPaid = mutation({
   },
 });
 
-// Mark order payment failed
-export const markOrderFailed = mutation({
+// Internal: mark payment failed. Restores stock for any line items.
+export const markOrderFailed = internalMutation({
   args: { orderId: v.id("orders") },
   handler: async (ctx, args) => {
+    const order = await ctx.db.get(args.orderId);
+    if (!order) return;
+    if (order.paymentStatus === "paid") return; // can't fail a paid order
+    if (order.paymentStatus === "failed") return; // idempotent
+    // Restore stock for each line item.
+    for (const item of order.items) {
+      const product = await ctx.db.get(item.productId);
+      if (product) {
+        await ctx.db.patch(item.productId, {
+          stock: product.stock + item.quantity,
+          updatedAt: Date.now(),
+        });
+      }
+    }
     await ctx.db.patch(args.orderId, {
       paymentStatus: "failed",
       status: "cancelled",

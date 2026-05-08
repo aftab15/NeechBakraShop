@@ -46,18 +46,17 @@ export default function ProductDetails() {
       return
     }
     const size = selectedSize || product.sizes[0]
-    for (let i = 0; i < quantity; i++) {
-      dispatch(addToCart({
-        productId: product._id,
-        name: product.name,
-        slug: product.slug,
-        image: product.images?.[0] || '',
-        size,
-        price: product.price,
-        compareAtPrice: product.compareAtPrice,
-        gradientClass: product.gradientClass,
-      }))
-    }
+    dispatch(addToCart({
+      productId: product._id,
+      name: product.name,
+      slug: product.slug,
+      image: product.images?.[0] || '',
+      size,
+      price: product.price,
+      compareAtPrice: product.compareAtPrice,
+      gradientClass: product.gradientClass,
+      quantity,
+    }))
     dispatch(openCart())
     toast.success(`${product.name} (${size}) added to cart!`)
   }

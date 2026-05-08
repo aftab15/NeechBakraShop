@@ -1,3 +1,4 @@
+/* global process */
 export default {
   providers: [
     {
