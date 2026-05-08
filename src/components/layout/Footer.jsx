@@ -3,6 +3,7 @@ import { Youtube, Instagram, Twitter, Twitch } from 'lucide-react'
 import { useState } from 'react'
 import { useMutation } from 'convex/react'
 import { api } from '../../../convex/_generated/api'
+import Logo from '../common/Logo'
 import toast from 'react-hot-toast'
 
 const policyLinks = [
@@ -58,7 +59,8 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="lg:col-span-1">
-            <Link to="/" className="inline-block mb-5">
+            <Link to="/" className="inline-flex items-center gap-2.5 mb-5" aria-label="NeechBakra home">
+              <Logo size={36} />
               <span style={{ fontFamily: 'Orbitron, monospace', fontWeight: 900, fontSize: '16px', letterSpacing: '0.06em', color: '#F0EBE3' }}>
                 Neech<span style={{ color: '#FF3500' }}>Bakra</span>
               </span>

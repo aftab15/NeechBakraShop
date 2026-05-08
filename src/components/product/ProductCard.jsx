@@ -1,5 +1,5 @@
 import { useRef, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { Heart, ShoppingBag, MoveRight } from 'lucide-react'
 import { addToCart, openCart } from '../../features/cart/cartSlice'
@@ -10,7 +10,6 @@ import toast from 'react-hot-toast'
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch()
-  const navigate = useNavigate()
   const isWishlisted = useSelector(selectIsWishlisted(product._id))
   const cardRef = useRef(null)
 
